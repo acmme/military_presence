@@ -17,7 +17,7 @@ library(tidyverse)
 
 Our data analysis project will be analyzing data the Department of Defense's personnel reports, in which they make publicly available where military personnel are assigned.
 
-We used Excel's Power Query Editor in order to clean up and consolidate the military location data. The reason for this is because the data was originally compiled as excel files, with merged rows and columns that RStudio had trouble understanding and in fact summarized by deleting data in certain columns with conflicting data types. With the power query editor, an Excel file that shows location information as of September 2019 that originally looked like this:
+We used Excel's Power Query Editor in order to clean up and consolidate the military location data. The reason for this is because the data was originally compiled as excel files, with merged rows and columns that RStudio had trouble understanding and in fact summarized by deleting and changing data in certain columns with conflicting data types. With the power query editor, an Excel file that shows location information as of September 2019 that originally looked like this:
 
 ```{r}
 example_sept_2019 <- read_csv("unconsolidated_data/example_sept_2019.csv")
@@ -33,6 +33,12 @@ military_presence_data <- read_csv("military_presence_data.csv")
 
 view(military_presence_data)
 
+```
+
+(Opening the Excel file's power query editor included (unconsolidated_data/raw_data/military_presence_data.xlsx will show this):
+
+```{r, echo=FALSE}
+knitr::include_graphics(rep("images/power_query_editor.png"))
 ```
 
 The data includes military location data that was updated in 2008 up to 2019, to include the last three full terms of the last two presidents and the last year of George Bush's presidency (to establish an initial data point). This data was updated once a year until 2014, when it became a quarterly update. For that reason, early data might be more nonspecific than later data. The data also assumes the locations "Armed Forces Europe," "Armed Forces The Americas" and "Armed Forces Pacific" to be located in the United States, which is a quirk of the data that we will need to research in order to differentiate between soldiers recorded as being actually located overseas, such as in Germany or New Zealand, and soldiers actually in the U.S.
