@@ -35,7 +35,7 @@ view(military_presence_data)
 
 ```
 
-(Opening the Excel file's power query editor included (unconsolidated_data/raw_data/military_presence_data.xlsx will show this):
+Opening the power query editor of this Excel file (unconsolidated_data/raw_data/military_presence_data.xlsx) will show this:
 
 ```{r, echo=FALSE}
 knitr::include_graphics(rep("images/power_query_editor.png"))
