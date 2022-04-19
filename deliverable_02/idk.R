@@ -1,27 +1,8 @@
----
-title: "R Notebook"
-author: Lyna Bentahar & Katia Pechenkina
-output: html_notebook
----
-
-```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-```{r}
-# Turn off scientific notation
-options(scipen=999)
 library(tidyverse)
-library(readxl)
 library(lubridate)
-
-```
-
-Our data analysis project will be analyzing data the Department of Defense's personnel reports, in which they make publicly available where military personnel are assigned.
-
-First, we created a dataframe for each of the excel files by using the readxl package, from 2008 to 2019.
-
-```{r}
+library(readxl)
 
 dec_2013 <- read_xlsx("~/GitHub/military_presence/deliverable_02/unconsolidated_data/raw_data/dec_2013.xlsx")
 dec_2014 <- read_xlsx("~/GitHub/military_presence/deliverable_02/unconsolidated_data/raw_data/dec_2014.xlsx")
@@ -58,12 +39,6 @@ march_2017 <- read_xlsx("~/GitHub/military_presence/deliverable_02/unconsolidate
 march_2018 <- read_xlsx("~/GitHub/military_presence/deliverable_02/unconsolidated_data/raw_data/march_2018.xlsx")
 march_2019 <- read_xlsx("~/GitHub/military_presence/deliverable_02/unconsolidated_data/raw_data/march_2019.xlsx")
 
-```
-
-We bound these together into a dataframe called military_presence_data using the function bind_rows(), where we ID'd each dataframe by their date, listed month-date-year.
-
-```{r}
-
 military_presence_data <- bind_rows(
   list("12-01-2013" = dec_2013, 
        "12-01-2014" = dec_2014, 
@@ -97,12 +72,6 @@ military_presence_data <- bind_rows(
        "03-01-2018" = march_2018, 
        "03-01-2019" = march_2019), .id = 'Date')
 
-```
-
-To clean up the data, we had to delete columns that included subtotals (as these aren't necessary right now), which we did with the select() function. There are empty rows at the top of the data that we need to delete as well, which we did with the filter() function. We didn't delete the column names that are included as rows in the data just yet, as we first need to name the columns. This could've been done in any order, but we chose this order just to make sure we didn't accidentally delete anything that we would need later. So we named all the columns, and deleted the duplicated column names included in the data.
-
-```{r}
-
 military_presence_data <- military_presence_data %>% 
   select(-c(2, 9, 17, 23, 24, 25)) %>% 
   filter(!row_number() %in% c(1, 2, 3, 4)) %>% 
@@ -127,32 +96,11 @@ military_presence_data <- military_presence_data %>%
          ) %>% 
   filter(!row_number() %in% c(1, 2))
 
-```
-
-Finally, there are rows and rows that simply have no data at all, so we used the drop_na() function to delete them. We asked to drop any rows that were included in the Location and Navy_Active_Duty columns just because not all of the rows are purely NA rows, and we needed to get rid of rows that even have some NA data. 
-
-```{r}
-
 military_presence_data <- military_presence_data %>% 
   drop_na(Location, Navy_Active_Duty)
-
-```
-
-Finally, all the columns are assigned the chr data type, but we need a date datatype as a numeric data type. So we created a string that would convert all our columns with numbers in them into the numeric datatype, and then used the lubridate package to read the Date column as month-day-year dates.
-
-```{r}
 
 i <- c(3:19)
 
 military_presence_data[ , i] <- apply(military_presence_data[ , i], 2, function(x) as.numeric(as.character(x)))
 
 military_presence_data$Date <- mdy(military_presence_data$Date)
-
-
-```
-
-The data includes military location data that was updated in 2008 up to 2019, to include the last three full terms of the last two presidents and the last year of George Bush's presidency (to establish an initial data point). This data was updated once a year until 2014, when it became a quarterly update. For that reason, early data might be more nonspecific than later data. The data also assumes the locations "Armed Forces Europe," "Armed Forces The Americas" and "Armed Forces Pacific" to be located in the United States, which is a quirk of the data that we will need to research in order to differentiate between soldiers recorded as being actually located overseas, such as in Germany or New Zealand, and soldiers actually in the U.S.
-
-A number of soldiers are also located in an "Unknown" location in the U.S., which is only described as active duty members of the Army (which is to say, there are no reserve Marines that are in an "unknown" US location). This might not be accurate and might be a way to record members of the military regardless of which branch they're from.
-
-As of December 2017, the Department of Defense stopped including personnel on temporary duty, which will show a reduction in raw numbers and could show a reduction in proportional military presence in each country or U.S. territory. The data doesn't differentiate between temporary and permanent personnel.
