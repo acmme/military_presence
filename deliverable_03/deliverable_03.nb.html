@@ -218,122 +218,12 @@ pre code {
 
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBUdXJuIG9mZiBzY2llbnRpZmljIG5vdGF0aW9uXG5vcHRpb25zKHNjaXBlbj05OTkpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkobHVicmlkYXRlKVxuXG5gYGAifQ== -->
-<pre class="r"><code># Turn off scientific notation
-options(scipen=999)
-library(tidyverse)
-library(lubridate)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoXCJtaWxpdGFyeV9wcmVzZW5jZS5jc3ZcIilcbmBgYCJ9 -->
-<pre class="r"><code>military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogNzAxMCBDb2x1bW5zOiAyMFxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAgICgxKTogTG9jYXRpb25cbmRibCAgKDE4KTogQXJteV9BY3RpdmVfRHV0eSwgTmF2eV9BY3RpdmVfRHV0eSwgTWFyaW5lX0NvcnBzX0FjdGl2ZV9EdXR5LCBBaXJfRm9yY2VfQWN0aXZlX0R1dHksIENvYXMuLi5cbmRhdGUgICgxKTogRGF0ZVxuXG5pIFVzZSBgc3BlYygpYCB0byByZXRyaWV2ZSB0aGUgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbiBmb3IgdGhpcyBkYXRhLlxuaSBTcGVjaWZ5IHRoZSBjb2x1bW4gdHlwZXMgb3Igc2V0IGBzaG93X2NvbF90eXBlcyA9IEZBTFNFYCB0byBxdWlldCB0aGlzIG1lc3NhZ2UuXG4ifQ== -->
-<pre><code>Rows: 7010 Columns: 20
--- Column specification --------------------------------------------------------------------------------
-Delimiter: &quot;,&quot;
-chr   (1): Location
-dbl  (18): Army_Active_Duty, Navy_Active_Duty, Marine_Corps_Active_Duty, Air_Force_Active_Duty, Coas...
-date  (1): Date
-
-i Use `spec()` to retrieve the full column specification for this data.
-i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2UgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIFxuICBtdXRhdGUoXG4gICAgWWVhciA9IHllYXIoRGF0ZSksXG4gICAgTW9udGggPSBtb250aChEYXRlLCBsYWJlbCA9IFRSVUUsIGFiYnIgPSBGQUxTRSlcbiAgKVxuXG5taWxpdGFyeV9wcmVzZW5jZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSBcbiAgZmlsdGVyKFllYXIgPT0gMjAyMSlcblxuI05vIGdvdmVybm1lbnQgZGF0YSBvbiBVLlMuIHRyb29wIGxldmVscyBpbiBBZmdoYW5pc3RhbiBoYXZlIGJlZW4gbWFkZSBhdmFpbGFibGUgc2luY2UgMjAxNy4gR292ZXJubWVudCBkYXRhIHJldHVybmVkIHRvIGJlaW5nIG1hZGUgcHVibGljbHkgYXZhaWxhYmxlIGluIERlY2VtYmVyIDIwMjEuXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZSA8LSBtaWxpdGFyeV9wcmVzZW5jZV8yMDIxICU+JSBcbiAgZ3JvdXBfYnkoTG9jYXRpb24sIERhdGUpICU+JSBcbiAgc3VtbWFyaXplKFxuICAgIHRvdGFsX2FybXkgPSBzdW0oQXJteV9BY3RpdmVfRHV0eSksXG4gICAgdG90YWxfbmF2eSA9IHN1bShOYXZ5X0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9tYXJpbmVfY29ycHMgPSBzdW0oTWFyaW5lX0NvcnBzX0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9haXJfZm9yY2UgPSBzdW0oQWlyX0ZvcmNlX0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9jb2FzdF9ndWFyZCA9IHN1bShDb2FzdF9HdWFyZF9BY3RpdmVfRHV0eSksXG4gICAgdG90YWxfYWN0aXZlX2R1dHkgPSB0b3RhbF9hcm15ICsgdG90YWxfbmF2eSArIHRvdGFsX21hcmluZV9jb3JwcyArIHRvdGFsX2Fpcl9mb3JjZSArIHRvdGFsX2NvYXN0X2d1YXJkXG4gICkgJT4lIFxuICBzZWxlY3QoTG9jYXRpb24sIERhdGUsIHRvdGFsX2FjdGl2ZV9kdXR5KSAlPiUgXG4gIGFycmFuZ2UoTG9jYXRpb24sIERhdGUsIC5ieV9ncm91cCA9IFRSVUUpXG5gYGAifQ== -->
-<pre class="r"><code>military_presence &lt;- military_presence %&gt;% 
-  mutate(
-    Year = year(Date),
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
-
-military_presence_2021 &lt;- military_presence %&gt;% 
-  filter(Year == 2021)
-
-#No government data on U.S. troop levels in Afghanistan have been made available since 2017. Government data returned to being made publicly available in December 2021.
-
-military_presence_total_active &lt;- military_presence_2021 %&gt;% 
-  group_by(Location, Date) %&gt;% 
-  summarize(
-    total_army = sum(Army_Active_Duty),
-    total_navy = sum(Navy_Active_Duty),
-    total_marine_corps = sum(Marine_Corps_Active_Duty),
-    total_air_force = sum(Air_Force_Active_Duty),
-    total_coast_guard = sum(Coast_Guard_Active_Duty),
-    total_active_duty = total_army + total_navy + total_marine_corps + total_air_force + total_coast_guard
-  ) %&gt;% 
-  select(Location, Date, total_active_duty) %&gt;% 
-  arrange(Location, Date, .by_group = TRUE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ0xvY2F0aW9uJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
-<pre><code>`summarise()` has grouped output by &#39;Location&#39;. You can override using the `.groups` argument.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZSA8LSBtaWxpdGFyeV9wcmVzZW5jZV8yMDIxICU+JSBcbiAgZ3JvdXBfYnkoTG9jYXRpb24sIERhdGUpICU+JSBcbiAgc3VtbWFyaXplKFxuICAgIHRvdGFsX2FybXkgPSBzdW0oQXJteV9SZXNlcnZlKSxcbiAgICB0b3RhbF9uYXZ5ID0gc3VtKE5hdnlfUmVzZXJ2ZSksXG4gICAgdG90YWxfbWFyaW5lX2NvcnBzID0gc3VtKE1hcmluZV9Db3Jwc19SZXNlcnZlKSxcbiAgICB0b3RhbF9haXJfZm9yY2UgPSBzdW0oQWlyX0ZvcmNlX1Jlc2VydmUpLFxuICAgIHRvdGFsX2NvYXN0X2d1YXJkID0gc3VtKENvYXN0X0d1YXJkX1Jlc2VydmUpLFxuICAgIHRvdGFsX3Jlc2VydmUgPSB0b3RhbF9hcm15ICsgdG90YWxfbmF2eSArIHRvdGFsX21hcmluZV9jb3JwcyArIHRvdGFsX2Fpcl9mb3JjZSArIHRvdGFsX2NvYXN0X2d1YXJkXG4gICkgJT4lIFxuICBzZWxlY3QoTG9jYXRpb24sIERhdGUsIHRvdGFsX3Jlc2VydmUpICU+JSBcbiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSlcbmBgYCJ9 -->
-<pre class="r"><code>military_presence_total_reserve &lt;- military_presence_2021 %&gt;% 
-  group_by(Location, Date) %&gt;% 
-  summarize(
-    total_army = sum(Army_Reserve),
-    total_navy = sum(Navy_Reserve),
-    total_marine_corps = sum(Marine_Corps_Reserve),
-    total_air_force = sum(Air_Force_Reserve),
-    total_coast_guard = sum(Coast_Guard_Reserve),
-    total_reserve = total_army + total_navy + total_marine_corps + total_air_force + total_coast_guard
-  ) %&gt;% 
-  select(Location, Date, total_reserve) %&gt;% 
-  arrange(Location, Date, .by_group = TRUE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ0xvY2F0aW9uJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
-<pre><code>`summarise()` has grouped output by &#39;Location&#39;. You can override using the `.groups` argument.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZVstMSxdXG5taWxpdGFyeV9wcmVzZW5jZV90b3RhbF9yZXNlcnZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmVbLTEsXVxuXG4jUmVtb3ZlIEFmZ2hhbmlzdGFuIGJlY2F1c2UgaXQncyBub3QgcmVsZXZhbnQgdG8gb3VyIHF1ZXN0aW9uLlxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlICU+JSBcbiAgbXV0YXRlKGRlbHRhID0gdG90YWxfYWN0aXZlX2R1dHkgLSBsYWcodG90YWxfYWN0aXZlX2R1dHkpKSAlPiUgXG4gIHNlbGVjdCgtdG90YWxfYWN0aXZlX2R1dHkpICU+JSBcbiAgbXV0YXRlKFxuICAgIE1vbnRoID0gbW9udGgoRGF0ZSwgbGFiZWwgPSBUUlVFLCBhYmJyID0gRkFMU0UpXG4gIClcblxubWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YSldID0gMFxuXG5taWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmUgJT4lIFxuICBtdXRhdGUoZGVsdGEgPSB0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpKSAlPiUgXG4gIHNlbGVjdCgtdG90YWxfcmVzZXJ2ZSkgJT4lIFxuICBtdXRhdGUoXG4gICAgTW9udGggPSBtb250aChEYXRlLCBsYWJlbCA9IFRSVUUsIGFiYnIgPSBGQUxTRSlcbiAgKVxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhKV0gPSAwXG5taWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGEpXSA9IDBcblxuZ2dwbG90KCkgKyBnZW9tX2xpbmUoZGF0YT1taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGEsIGFlcyh4PURhdGUsIHk9ZGVsdGEsIGdyb3VwPUxvY2F0aW9uLCBjb2xvcj1Mb2NhdGlvbikpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJOb25lXCIpXG5gYGAifQ== -->
-<pre class="r"><code>military_presence_total_active &lt;- military_presence_total_active[-1,]
-military_presence_total_reserve &lt;- military_presence_total_reserve[-1,]
-
-#Remove Afghanistan because it&#39;s not relevant to our question.
-
-military_presence_active_delta &lt;- military_presence_total_active %&gt;% 
-  mutate(delta = total_active_duty - lag(total_active_duty)) %&gt;% 
-  select(-total_active_duty) %&gt;% 
-  mutate(
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
-
-military_presence_active_delta[is.na(military_presence_active_delta)] = 0
-
-military_presence_reserve_delta &lt;- military_presence_total_reserve %&gt;% 
-  mutate(delta = total_reserve - lag(total_reserve)) %&gt;% 
-  select(-total_reserve) %&gt;% 
-  mutate(
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
-
-military_presence_active_delta[is.na(military_presence_active_delta)] = 0
-military_presence_reserve_delta[is.na(military_presence_reserve_delta)] = 0
-
-ggplot() + geom_line(data=military_presence_active_delta, aes(x=Date, y=delta, group=Location, color=Location)) + theme(legend.position = &quot;None&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbgAAAEPCAMAAAAH2yFMAAAASFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6AGY6kNtmAABmADpmtv+QOgCQ2/+2ZgC225C2///bkDrb///r6+v/tmb/25D//7b//9v///+h8erwAAAACXBIWXMAABAlAAAQJQEuD214AAAEOklEQVR4nO3a7W7aMBhA4fA1KCUjLNDc/50udqArwqBpqpT3eOeRKC3qD0tHjp2YZhBSM/cA9G8MB2U4KMNBGQ7KcFCvwv1SPIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4qGK4y67JlkfDRVUM165O3Xo4b/bOuLBK4S677dCvTkM3vgwXVDncfjj/OOaX4YIqhft43w6Xt4PhIiuucd24K2m3XiojK4Yb2nXaWV43lYaLqBzu3txjVEFxczKub0nvfVxcr8J1hovrMVzbfNp6qQzr1YxzjQvMzQmU4aAewt1OBjwdiM0ZB2U4qHK48Xq5OrVbw8VVDNcvDt3qlI7lDBdVKVw61kknAz45CawULh2kpnA+qwzs1YxrPY+L68Ua1zV+WSiup7vKplncnljOPUYVlMPdm3uMKjAc1EM4n1UylDcn+Qi1vy1yc49RBaVwH+/r/O7X8wIrhUs34HnieamMqzzjpoeU3oAH9mSNS1Ouc40LrBhu2lpe55vhQiqHuzf3GFVgOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQfxNOgRkOynBQhoMyHJThoOoM1zbZ/u7Dfv/kv5EqDbc6jT/Pm/WXzy47w4U3hRv6xeHPZ4YDuIb7eE9Trs0XzfOmacZPu/GP7cyj+xZVh8vv7RivG6dennHpl/OmhnJ1h+uWx8vbIa12+xzuskvN+uVx3uF9h+rDpbc+XStTuGnRSxnx6g7XTqva8ud1xvVN6T4BqepwaXOSp9ftUnm3zWSrOlzqlBe0vrmtcRXMtUnN4fL2cZps4y1A3pikXeXQ1jDvKg33ZSkb17jFIbVqb/dxNWwqKw33HzAclOGgDAdlOCjDQRkOynBQhoMyHNRvXlR5RR4zKywAAAAASUVORK5CYII=" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5nZ3Bsb3QoKSArIGdlb21fbGluZShkYXRhPW1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGEsIGFlcyh4PURhdGUsIHk9ZGVsdGEsIGdyb3VwPUxvY2F0aW9uLCBjb2xvcj1Mb2NhdGlvbikpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gXCJOb25lXCIpXG5cbmBgYCJ9 -->
-<pre class="r"><code>
-ggplot() + geom_line(data=military_presence_reserve_delta, aes(x=Date, y=delta, group=Location, color=Location)) + theme(legend.position = &quot;None&quot;)
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbgAAAEPCAMAAAAH2yFMAAAASFBMVEUAAAAAADoAAGYAOpAAZrY6AAA6AGY6kNtmAABmADpmtv+QOgCQ2/+2ZgC225C2///bkDrb///r6+v/tmb/25D//7b//9v///+h8erwAAAACXBIWXMAABAlAAAQJQEuD214AAAEOklEQVR4nO3a7W7aMBhA4fA1KCUjLNDc/50udqArwqBpqpT3eOeRKC3qD0tHjp2YZhBSM/cA9G8MB2U4KMNBGQ7KcFCvwv1SPIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4qGK4y67JlkfDRVUM165O3Xo4b/bOuLBK4S677dCvTkM3vgwXVDncfjj/OOaX4YIqhft43w6Xt4PhIiuucd24K2m3XiojK4Yb2nXaWV43lYaLqBzu3txjVEFxczKub0nvfVxcr8J1hovrMVzbfNp6qQzr1YxzjQvMzQmU4aAewt1OBjwdiM0ZB2U4qHK48Xq5OrVbw8VVDNcvDt3qlI7lDBdVKVw61kknAz45CawULh2kpnA+qwzs1YxrPY+L68Ua1zV+WSiup7vKplncnljOPUYVlMPdm3uMKjAc1EM4n1UylDcn+Qi1vy1yc49RBaVwH+/r/O7X8wIrhUs34HnieamMqzzjpoeU3oAH9mSNS1Ouc40LrBhu2lpe55vhQiqHuzf3GFVgOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQhoMyHJThoAwHZTgow0EZDspwUIaDMhyU4aAMB2U4KMNBGQ7KcFCGgzIclOGgDAdlOCjDQRkOynBQfxNOgRkOynBQhoMyHJThoOoM1zbZ/u7Dfv/kv5EqDbc6jT/Pm/WXzy47w4U3hRv6xeHPZ4YDuIb7eE9Trs0XzfOmacZPu/GP7cyj+xZVh8vv7RivG6dennHpl/OmhnJ1h+uWx8vbIa12+xzuskvN+uVx3uF9h+rDpbc+XStTuGnRSxnx6g7XTqva8ud1xvVN6T4BqepwaXOSp9ftUnm3zWSrOlzqlBe0vrmtcRXMtUnN4fL2cZps4y1A3pikXeXQ1jDvKg33ZSkb17jFIbVqb/dxNWwqKw33HzAclOGgDAdlOCjDQRkOynBQhoMyHNRvXlR5RR4zKywAAAAASUVORK5CYII=" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbGl2ZXJhYmxlIDAzIg0KYXV0aG9yOiBMeW5hIEJlbnRhaGFyICYgS2F0aWEgUGVjaGVua2luYQ0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KYGBge3J9DQojIFR1cm4gb2ZmIHNjaWVudGlmaWMgbm90YXRpb24NCm9wdGlvbnMoc2NpcGVuPTk5OSkNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShsdWJyaWRhdGUpDQoNCmBgYA0KDQpgYGB7cn0NCm1pbGl0YXJ5X3ByZXNlbmNlIDwtIHJlYWRfY3N2KCJtaWxpdGFyeV9wcmVzZW5jZS5jc3YiKQ0KDQptaWxpdGFyeV9wcmVzZW5jZSA8LSBtaWxpdGFyeV9wcmVzZW5jZSAlPiUgDQogIG11dGF0ZSgNCiAgICBZZWFyID0geWVhcihEYXRlKSwNCiAgICBNb250aCA9IG1vbnRoKERhdGUsIGxhYmVsID0gVFJVRSwgYWJiciA9IEZBTFNFKQ0KICApDQoNCm1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIA0KICBmaWx0ZXIoWWVhciA9PSAyMDIxKQ0KDQojTm8gZ292ZXJubWVudCBkYXRhIG9uIFUuUy4gdHJvb3AgbGV2ZWxzIGluIEFmZ2hhbmlzdGFuIGhhdmUgYmVlbiBtYWRlIGF2YWlsYWJsZSBzaW5jZSAyMDE3LiBHb3Zlcm5tZW50IGRhdGEgcmV0dXJuZWQgdG8gYmVpbmcgbWFkZSBwdWJsaWNseSBhdmFpbGFibGUgaW4gRGVjZW1iZXIgMjAyMS4NCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIA0KICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lIA0KICBzdW1tYXJpemUoDQogICAgdG90YWxfYXJteSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9uYXZ5ID0gc3VtKE5hdnlfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX21hcmluZV9jb3JwcyA9IHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX2Fpcl9mb3JjZSA9IHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX2NvYXN0X2d1YXJkID0gc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9hY3RpdmVfZHV0eSA9IHRvdGFsX2FybXkgKyB0b3RhbF9uYXZ5ICsgdG90YWxfbWFyaW5lX2NvcnBzICsgdG90YWxfYWlyX2ZvcmNlICsgdG90YWxfY29hc3RfZ3VhcmQNCiAgKSAlPiUgDQogIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfYWN0aXZlX2R1dHkpICU+JSANCiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZSA8LSBtaWxpdGFyeV9wcmVzZW5jZV8yMDIxICU+JSANCiAgZ3JvdXBfYnkoTG9jYXRpb24sIERhdGUpICU+JSANCiAgc3VtbWFyaXplKA0KICAgIHRvdGFsX2FybXkgPSBzdW0oQXJteV9SZXNlcnZlKSwNCiAgICB0b3RhbF9uYXZ5ID0gc3VtKE5hdnlfUmVzZXJ2ZSksDQogICAgdG90YWxfbWFyaW5lX2NvcnBzID0gc3VtKE1hcmluZV9Db3Jwc19SZXNlcnZlKSwNCiAgICB0b3RhbF9haXJfZm9yY2UgPSBzdW0oQWlyX0ZvcmNlX1Jlc2VydmUpLA0KICAgIHRvdGFsX2NvYXN0X2d1YXJkID0gc3VtKENvYXN0X0d1YXJkX1Jlc2VydmUpLA0KICAgIHRvdGFsX3Jlc2VydmUgPSB0b3RhbF9hcm15ICsgdG90YWxfbmF2eSArIHRvdGFsX21hcmluZV9jb3JwcyArIHRvdGFsX2Fpcl9mb3JjZSArIHRvdGFsX2NvYXN0X2d1YXJkDQogICkgJT4lIA0KICBzZWxlY3QoTG9jYXRpb24sIERhdGUsIHRvdGFsX3Jlc2VydmUpICU+JSANCiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZVstMSxdDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9yZXNlcnZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmVbLTEsXQ0KDQojUmVtb3ZlIEFmZ2hhbmlzdGFuIGJlY2F1c2UgaXQncyBub3QgcmVsZXZhbnQgdG8gb3VyIHF1ZXN0aW9uLg0KDQptaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlICU+JSANCiAgbXV0YXRlKGRlbHRhID0gdG90YWxfYWN0aXZlX2R1dHkgLSBsYWcodG90YWxfYWN0aXZlX2R1dHkpKSAlPiUgDQogIHNlbGVjdCgtdG90YWxfYWN0aXZlX2R1dHkpICU+JSANCiAgbXV0YXRlKA0KICAgIE1vbnRoID0gbW9udGgoRGF0ZSwgbGFiZWwgPSBUUlVFLCBhYmJyID0gRkFMU0UpDQogICkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YSldID0gMA0KDQptaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmUgJT4lIA0KICBtdXRhdGUoZGVsdGEgPSB0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpKSAlPiUgDQogIHNlbGVjdCgtdG90YWxfcmVzZXJ2ZSkgJT4lIA0KICBtdXRhdGUoDQogICAgTW9udGggPSBtb250aChEYXRlLCBsYWJlbCA9IFRSVUUsIGFiYnIgPSBGQUxTRSkNCiAgKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhKV0gPSAwDQptaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGEpXSA9IDANCg0KZ2dwbG90KCkgKyBnZW9tX2xpbmUoZGF0YT1taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGEsIGFlcyh4PURhdGUsIHk9ZGVsdGEsIGdyb3VwPUxvY2F0aW9uLCBjb2xvcj1Mb2NhdGlvbikpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gIk5vbmUiKQ0KDQpnZ3Bsb3QoKSArIGdlb21fbGluZShkYXRhPW1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGEsIGFlcyh4PURhdGUsIHk9ZGVsdGEsIGdyb3VwPUxvY2F0aW9uLCBjb2xvcj1Mb2NhdGlvbikpICsgdGhlbWUobGVnZW5kLnBvc2l0aW9uID0gIk5vbmUiKQ0KDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbGl2ZXJhYmxlIDAzIg0KYXV0aG9yOiBMeW5hIEJlbnRhaGFyICYgS2F0aWEgUGVjaGVua2luYQ0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KDQoNCmBgYHtyfQ0KDQpgYGANCg0K</div>
 
 
 
