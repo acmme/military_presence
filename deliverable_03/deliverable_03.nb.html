@@ -233,61 +233,93 @@ library(rvest)
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Question 2: How does total military personnel correlate with military spending?</p>
+<p>First, we’re going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021 (we include the year 2021 for the sake of answering question 3). There are two things we want to do with dataframe: create a Year column and a Month column. The Year column is to be able to better filter our data across different years.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSByZWFkX2NzdihcIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdlwiKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSByZWFkX2NzdihcIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdlwiKVxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSBtaWxpdGFyeV9wcmVzZW5jZSAlPiUgXG4gIG11dGF0ZShcbiAgICBZZWFyID0geWVhcihEYXRlKVxuICApXG5gYGAifQ== -->
 <pre class="r"><code>
-military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogODg0MiBDb2x1bW5zOiAxOVxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAgKDEpOiBMb2NhdGlvblxuZGJsICAoMTcpOiBBcm15X0FjdGl2ZV9EdXR5LCBOYXZ5X0FjdGl2ZV9EdXR5LCBNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHksIEFpcl9Gb3JjZV9BY3RpdmVfRHV0eSwgQ29hLi4uXG5kYXRlICAoMSk6IERhdGVcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
-<pre><code>Rows: 8842 Columns: 19
--- Column specification -------------------------------------------------------------------------------
-Delimiter: &quot;,&quot;
-chr   (1): Location
-dbl  (17): Army_Active_Duty, Navy_Active_Duty, Marine_Corps_Active_Duty, Air_Force_Active_Duty, Coa...
-date  (1): Date
+military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)
 
-i Use `spec()` to retrieve the full column specification for this data.
-i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2UgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIFxuICBtdXRhdGUoXG4gICAgWWVhciA9IHllYXIoRGF0ZSksXG4gICAgTW9udGggPSBtb250aChEYXRlLCBsYWJlbCA9IFRSVUUsIGFiYnIgPSBGQUxTRSlcbiAgKVxuXG5leHBlbmRpdHVyZV91cmwgPC0gXCJodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9QYXN0X21pbGl0YXJ5X2V4cGVuZGl0dXJlX2J5X2NvdW50cnlcIlxuXG5leHBlbmRpdHVyZV90YWJsZXMgPC0gZXhwZW5kaXR1cmVfdXJsICU+JSBcbiAgcmVhZF9odG1sKCkgJT4lIFxuICBodG1sX3RhYmxlKClcblxudGFibGUxIDwtIGV4cGVuZGl0dXJlX3RhYmxlc1tbMV1dXG50YWJsZTIgPC0gZXhwZW5kaXR1cmVfdGFibGVzW1syXV1cbnRhYmxlMyA8LSBleHBlbmRpdHVyZV90YWJsZXNbWzNdXVxudGFibGU0IDwtIGV4cGVuZGl0dXJlX3RhYmxlc1tbNF1dXG5cblVTX2V4cGVuZGl0dXJlX2RhdGEgPC0gdGFibGUxICU+JVxuICBsZWZ0X2pvaW4odGFibGUyLCBieT1jKCdDb3VudHJ5Jz0nQ291bnRyeScpKSAlPiUgXG4gIGxlZnRfam9pbih0YWJsZTMsIGJ5PWMoJ0NvdW50cnknPSdDb3VudHJ5JykpICU+JSBcbiAgbGVmdF9qb2luKHRhYmxlNCwgYnk9YygnQ291bnRyeSc9J0NvdW50cnknKSlcblxuVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBVU19leHBlbmRpdHVyZV9kYXRhICU+JSBcbiAgc2xpY2UoMTkpICU+JSBcbiAgc2VsZWN0KC1jKDEpKVxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICBwaXZvdF9sb25nZXIoYygxOjMzKSlcblxuVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBVU19leHBlbmRpdHVyZV9kYXRhICU+JSBcbiAgcmVuYW1lKFwiWWVhclwiID0gXCJuYW1lXCIsIFwiTWlsbGlvbnNfb2ZfZG9sbGFyc1wiID0gXCJ2YWx1ZVwiKSAlPiUgXG4gIHNsaWNlKC1jKDE6MjEpKVxuXG5VU19leHBlbmRpdHVyZV9kYXRhJE1pbGxpb25zX29mX2RvbGxhcnMgPC0gZ3N1YihcIixcIixcIlwiLFVTX2V4cGVuZGl0dXJlX2RhdGEkTWlsbGlvbnNfb2ZfZG9sbGFycylcblxuVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBhcy5kYXRhLmZyYW1lKGFwcGx5KFVTX2V4cGVuZGl0dXJlX2RhdGEsIDIsIGFzLm51bWVyaWMpKVxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICBtdXRhdGUoXG4gICAgZGVsdGFfZXhwZW5kaXR1cmUgPSBNaWxsaW9uc19vZl9kb2xsYXJzIC0gbGFnKE1pbGxpb25zX29mX2RvbGxhcnMpLFxuICAgIHBlcmNlbnRhZ2VfZGVsdGFfZXhwZW5kaXR1cmUgPSAoTWlsbGlvbnNfb2ZfZG9sbGFycyAtIGxhZyhNaWxsaW9uc19vZl9kb2xsYXJzKSkgLyBNaWxsaW9uc19vZl9kb2xsYXJzICogMTAwXG4gIClcblxuVVNfZXhwZW5kaXR1cmVfZGF0YVtpcy5uYShVU19leHBlbmRpdHVyZV9kYXRhKV0gPSAwXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV9yZXNlcnZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSBcbiAgZ3JvdXBfYnkoWWVhcikgJT4lIFxuICBzdW1tYXJpemUoXG4gICAgdG90YWxfYXJteV9hY3RpdmUgPSBzdW0oQXJteV9BY3RpdmVfRHV0eSksXG4gICAgdG90YWxfbmF2eV9hY3RpdmUgPSBzdW0oTmF2eV9BY3RpdmVfRHV0eSksXG4gICAgdG90YWxfbWFyaW5lX2NvcnBzX2FjdGl2ZSA9IHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpLFxuICAgIHRvdGFsX2Fpcl9mb3JjZV9hY3RpdmUgPSBzdW0oQWlyX0ZvcmNlX0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9jb2FzdF9ndWFyZF9hY3RpdmUgPSBzdW0oQ29hc3RfR3VhcmRfQWN0aXZlX0R1dHkpLFxuICAgIHRvdGFsX2FjdGl2ZV9kdXR5ID0gdG90YWxfYXJteV9hY3RpdmUgKyB0b3RhbF9uYXZ5X2FjdGl2ZSArIHRvdGFsX21hcmluZV9jb3Jwc19hY3RpdmUgKyB0b3RhbF9haXJfZm9yY2VfYWN0aXZlICsgdG90YWxfY29hc3RfZ3VhcmRfYWN0aXZlLFxuICAgIFxuICAgIHRvdGFsX2FybXlfcmVzZXJ2ZSA9IHN1bShBcm15X1Jlc2VydmUpLFxuICAgIHRvdGFsX25hdnlfcmVzZXJ2ZSA9IHN1bShOYXZ5X1Jlc2VydmUpLFxuICAgIHRvdGFsX21hcmluZV9jb3Jwc19yZXNlcnZlID0gc3VtKE1hcmluZV9Db3Jwc19SZXNlcnZlKSxcbiAgICB0b3RhbF9haXJfZm9yY2VfcmVzZXJ2ZSA9IHN1bShBaXJfRm9yY2VfUmVzZXJ2ZSksXG4gICAgdG90YWxfY29hc3RfZ3VhcmRfcmVzZXJ2ZSA9IHN1bShDb2FzdF9HdWFyZF9SZXNlcnZlKSxcbiAgICB0b3RhbF9yZXNlcnZlID0gdG90YWxfYXJteV9yZXNlcnZlICsgdG90YWxfbmF2eV9yZXNlcnZlICsgdG90YWxfbWFyaW5lX2NvcnBzX3Jlc2VydmUgKyB0b3RhbF9haXJfZm9yY2VfcmVzZXJ2ZSArIHRvdGFsX2NvYXN0X2d1YXJkX3Jlc2VydmVcbiAgKSAlPiUgXG4gIHNlbGVjdChZZWFyLCB0b3RhbF9hY3RpdmVfZHV0eSwgdG90YWxfcmVzZXJ2ZSlcblxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgJT4lIFxuICBtdXRhdGUoXG4gICAgZGVsdGFfYWN0aXZlID0gdG90YWxfYWN0aXZlX2R1dHkgLSBsYWcodG90YWxfYWN0aXZlX2R1dHkpLFxuICAgIGRlbHRhX3Jlc2VydmUgPSB0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpLFxuICAgIHBlcmNlbnRhZ2VfZGVsdGFfYWN0aXZlID0gKHRvdGFsX2FjdGl2ZV9kdXR5IC0gbGFnKHRvdGFsX2FjdGl2ZV9kdXR5KSkgLyB0b3RhbF9hY3RpdmVfZHV0eSAqIDEwMCxcbiAgICBwZXJjZW50YWdlX2RlbHRhX3Jlc2VydmUgPSAodG90YWxfcmVzZXJ2ZSAtIGxhZyh0b3RhbF9yZXNlcnZlKSkgLyB0b3RhbF9yZXNlcnZlICogMTAwXG4gIClcblxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmVbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUpXSA9IDBcblxuZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgJT4lIFxuICBsZWZ0X2pvaW4oVVNfZXhwZW5kaXR1cmVfZGF0YSwgYnkgPSBjKCdZZWFyJykpXG5cbmV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5IDwtIGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5ICU+JSBcbiAgc2xpY2UoMToxMikgJT4lIFxuICBzZWxlY3QoWWVhciwgcGVyY2VudGFnZV9kZWx0YV9hY3RpdmUsIHBlcmNlbnRhZ2VfZGVsdGFfcmVzZXJ2ZSwgcGVyY2VudGFnZV9kZWx0YV9leHBlbmRpdHVyZSlcblxuZ2dwbG90KCkgK1xuICBnZW9tX2xpbmUoXG4gICAgZGF0YSA9IGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5LFxuICAgIGFlcyh4ID0gWWVhcixcbiAgICB5ID0gcGVyY2VudGFnZV9kZWx0YV9hY3RpdmUsXG4gICAgY29sb3IgPSBcImJsdWVcIixcbiAgICBsYWJlbCA9IFwiaGVsbG9cIilcbiAgKSArXG4gIGdlb21fbGluZShcbiAgICBkYXRhID0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnksXG4gICAgYWVzKHggPSBZZWFyLFxuICAgIHkgPSBwZXJjZW50YWdlX2RlbHRhX3Jlc2VydmUsXG4gICAgY29sb3IgPSBcInJlZFwiKVxuICApICtcbiAgZ2VvbV9saW5lKFxuICAgIGRhdGEgPSBleHBlbmRpdHVyZV92c190b3RhbF9taWxpdGFyeSxcbiAgICBhZXMoeCA9IFllYXIsXG4gICAgeSA9IHBlcmNlbnRhZ2VfZGVsdGFfZXhwZW5kaXR1cmUpXG4gIClcbmBgYCJ9 -->
-<pre class="r"><code>military_presence &lt;- military_presence %&gt;% 
+military_presence &lt;- military_presence %&gt;% 
   mutate(
-    Year = year(Date),
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
-
+    Year = year(Date)
+  )</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>To see how military personnel data corresponds with military spending, we want military expenditure data. Wikipedia was able to create tables that shows military expenditure by country, in millions of dollars, in 2022 dollars, up to 2019. Wikipedia derives this information from the Stockholm International Peace Research Institute database.</p>
+<p>We call this up into a value called expenditure_url, read the tables in the source code, and combine the last two tables, which have data from 2000 to 2019 (the first two tables show expenditures from before that).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5leHBlbmRpdHVyZV91cmwgPC0gXCJodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9QYXN0X21pbGl0YXJ5X2V4cGVuZGl0dXJlX2J5X2NvdW50cnlcIlxuXG5leHBlbmRpdHVyZV90YWJsZXMgPC0gZXhwZW5kaXR1cmVfdXJsICU+JSBcbiAgcmVhZF9odG1sKCkgJT4lIFxuICBodG1sX3RhYmxlKClcblxudGFibGUzIDwtIGV4cGVuZGl0dXJlX3RhYmxlc1tbM11dXG50YWJsZTQgPC0gZXhwZW5kaXR1cmVfdGFibGVzW1s0XV1cblxuVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSB0YWJsZTMgJT4lIFxuICBsZWZ0X2pvaW4odGFibGU0LCBieT1jKCdDb3VudHJ5Jz0nQ291bnRyeScpKVxuICBcbmBgYCJ9 -->
+<pre class="r"><code>
 expenditure_url &lt;- &quot;https://en.wikipedia.org/wiki/Past_military_expenditure_by_country&quot;
 
 expenditure_tables &lt;- expenditure_url %&gt;% 
   read_html() %&gt;% 
   html_table()
 
-table1 &lt;- expenditure_tables[[1]]
-table2 &lt;- expenditure_tables[[2]]
 table3 &lt;- expenditure_tables[[3]]
 table4 &lt;- expenditure_tables[[4]]
 
-US_expenditure_data &lt;- table1 %&gt;%
-  left_join(table2, by=c(&#39;Country&#39;=&#39;Country&#39;)) %&gt;% 
-  left_join(table3, by=c(&#39;Country&#39;=&#39;Country&#39;)) %&gt;% 
+US_expenditure_data &lt;- table3 %&gt;% 
   left_join(table4, by=c(&#39;Country&#39;=&#39;Country&#39;))
-
+  </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We only want U.S. expenditure data, so we slice the U.S. row and remove the Country column (we know what country it is).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICBzbGljZSgxOCkgJT4lIFxuICBzZWxlY3QoLWMoMSkpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
 US_expenditure_data &lt;- US_expenditure_data %&gt;% 
-  slice(19) %&gt;% 
+  slice(18) %&gt;% 
   select(-c(1))
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We then use the pivot_longer() function to flip the columns and rows to make the data more usable.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICBwaXZvdF9sb25nZXIoYygxOjIwKSlcblxuYGBgIn0= -->
+<pre class="r"><code>
 US_expenditure_data &lt;- US_expenditure_data %&gt;% 
-  pivot_longer(c(1:33))
-
+  pivot_longer(c(1:20))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Also to make the data more useable, we’re going to name the first column Year and the second column Millions_of_dollars. At the same time, since we only need 2008-2019 data, we’re going to remove the first 8 rows.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICByZW5hbWUoXCJZZWFyXCIgPSBcIm5hbWVcIiwgXCJNaWxsaW9uc19vZl9kb2xsYXJzXCIgPSBcInZhbHVlXCIpICU+JSBcbiAgc2xpY2UoLWMoMTo4KSlcblxuYGBgIn0= -->
+<pre class="r"><code>
 US_expenditure_data &lt;- US_expenditure_data %&gt;% 
   rename(&quot;Year&quot; = &quot;name&quot;, &quot;Millions_of_dollars&quot; = &quot;value&quot;) %&gt;% 
-  slice(-c(1:21))
-
+  slice(-c(1:8))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Last thing we need to do is define our data types.. Right now, US_expenditure_data only has character data types. Millions_of_dollars needs to be numeric. But, it’s not possible to make the Millions_of_dollars column numeric, because there are characters in the cells; namely, commas.</p>
+<p>We will use the gsub() function to remove the commas. Then we can make the column numeric.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5VU19leHBlbmRpdHVyZV9kYXRhJE1pbGxpb25zX29mX2RvbGxhcnMgPC0gZ3N1YihcIixcIixcIlwiLFVTX2V4cGVuZGl0dXJlX2RhdGEkTWlsbGlvbnNfb2ZfZG9sbGFycylcblxuVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBhcy5kYXRhLmZyYW1lKGFwcGx5KFVTX2V4cGVuZGl0dXJlX2RhdGEsIDIsIGFzLm51bWVyaWMpKVxuYGBgIn0= -->
+<pre class="r"><code>
 US_expenditure_data$Millions_of_dollars &lt;- gsub(&quot;,&quot;,&quot;&quot;,US_expenditure_data$Millions_of_dollars)
 
-US_expenditure_data &lt;- as.data.frame(apply(US_expenditure_data, 2, as.numeric))
-
+US_expenditure_data &lt;- as.data.frame(apply(US_expenditure_data, 2, as.numeric))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Using the lag() function, we can determine and create a column showing the change in military expenditure each year, and then determine and create a column showing the percentage change. For the sake of showing this information in a graphic later, we will turn any NAs into 0.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5VU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIFxuICBtdXRhdGUoXG4gICAgZGVsdGFfZXhwZW5kaXR1cmUgPSBNaWxsaW9uc19vZl9kb2xsYXJzIC0gbGFnKE1pbGxpb25zX29mX2RvbGxhcnMpLFxuICAgIHBlcmNlbnRhZ2VfZGVsdGFfZXhwZW5kaXR1cmUgPSAoTWlsbGlvbnNfb2ZfZG9sbGFycyAtIGxhZyhNaWxsaW9uc19vZl9kb2xsYXJzKSkgLyBNaWxsaW9uc19vZl9kb2xsYXJzICogMTAwXG4gIClcblxuVVNfZXhwZW5kaXR1cmVfZGF0YVtpcy5uYShVU19leHBlbmRpdHVyZV9kYXRhKV0gPSAwXG5cbmBgYCJ9 -->
+<pre class="r"><code>
 US_expenditure_data &lt;- US_expenditure_data %&gt;% 
   mutate(
     delta_expenditure = Millions_of_dollars - lag(Millions_of_dollars),
@@ -295,50 +327,64 @@ US_expenditure_data &lt;- US_expenditure_data %&gt;%
   )
 
 US_expenditure_data[is.na(US_expenditure_data)] = 0
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>With our expenditure data organized, we now want to know the total military personnel, both active and in reserve, per year. We summarize the data by summarizing the military personnel from their different branches and separating them by active duty and reserve columns. Then, we determine and create a column showing the change in total personnel per year, and determine and create a column showing the percentage change. We do the same thing as the expenditure data in turning any NAs into 0.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSA8LSBtaWxpdGFyeV9wcmVzZW5jZSAlPiUgXG4gIGdyb3VwX2J5KFllYXIpICU+JSBcbiAgc3VtbWFyaXplKFxuICAgIHRvdGFsX2FjdGl2ZSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSArIHN1bShOYXZ5X0FjdGl2ZV9EdXR5KSArIHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpICsgc3VtKEFpcl9Gb3JjZV9BY3RpdmVfRHV0eSkgKyBzdW0oQ29hc3RfR3VhcmRfQWN0aXZlX0R1dHkpLFxuICAgIFxuICAgIHRvdGFsX3Jlc2VydmUgPSBzdW0oQXJteV9SZXNlcnZlKSArIHN1bShOYXZ5X1Jlc2VydmUpICsgc3VtKE1hcmluZV9Db3Jwc19SZXNlcnZlKSArIHN1bShBaXJfRm9yY2VfUmVzZXJ2ZSkgKyBzdW0oQ29hc3RfR3VhcmRfUmVzZXJ2ZSlcbiAgKSAlPiUgXG4gIHNlbGVjdChZZWFyLCB0b3RhbF9hY3RpdmUsIHRvdGFsX3Jlc2VydmUpXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV9yZXNlcnZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV9yZXNlcnZlICU+JSBcbiAgbXV0YXRlKFxuICAgIGRlbHRhX2FjdGl2ZSA9IHRvdGFsX2FjdGl2ZSAtIGxhZyh0b3RhbF9hY3RpdmUpLFxuICAgIGRlbHRhX3Jlc2VydmUgPSB0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpLFxuICAgIHBlcmNlbnRhZ2VfZGVsdGFfYWN0aXZlID0gKHRvdGFsX2FjdGl2ZSAtIGxhZyh0b3RhbF9hY3RpdmUpKSAvIHRvdGFsX2FjdGl2ZSAqIDEwMCxcbiAgICBwZXJjZW50YWdlX2RlbHRhX3Jlc2VydmUgPSAodG90YWxfcmVzZXJ2ZSAtIGxhZyh0b3RhbF9yZXNlcnZlKSkgLyB0b3RhbF9yZXNlcnZlICogMTAwXG4gIClcblxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmVbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUpXSA9IDBcblxuYGBgIn0= -->
+<pre class="r"><code>
 military_presence_total_active_reserve &lt;- military_presence %&gt;% 
   group_by(Year) %&gt;% 
   summarize(
-    total_army_active = sum(Army_Active_Duty),
-    total_navy_active = sum(Navy_Active_Duty),
-    total_marine_corps_active = sum(Marine_Corps_Active_Duty),
-    total_air_force_active = sum(Air_Force_Active_Duty),
-    total_coast_guard_active = sum(Coast_Guard_Active_Duty),
-    total_active_duty = total_army_active + total_navy_active + total_marine_corps_active + total_air_force_active + total_coast_guard_active,
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty),
     
-    total_army_reserve = sum(Army_Reserve),
-    total_navy_reserve = sum(Navy_Reserve),
-    total_marine_corps_reserve = sum(Marine_Corps_Reserve),
-    total_air_force_reserve = sum(Air_Force_Reserve),
-    total_coast_guard_reserve = sum(Coast_Guard_Reserve),
-    total_reserve = total_army_reserve + total_navy_reserve + total_marine_corps_reserve + total_air_force_reserve + total_coast_guard_reserve
+    total_reserve = sum(Army_Reserve) + sum(Navy_Reserve) + sum(Marine_Corps_Reserve) + sum(Air_Force_Reserve) + sum(Coast_Guard_Reserve)
   ) %&gt;% 
-  select(Year, total_active_duty, total_reserve)
+  select(Year, total_active, total_reserve)
 
 military_presence_total_active_reserve &lt;- military_presence_total_active_reserve %&gt;% 
   mutate(
-    delta_active = total_active_duty - lag(total_active_duty),
+    delta_active = total_active - lag(total_active),
     delta_reserve = total_reserve - lag(total_reserve),
-    percentage_delta_active = (total_active_duty - lag(total_active_duty)) / total_active_duty * 100,
+    percentage_delta_active = (total_active - lag(total_active)) / total_active * 100,
     percentage_delta_reserve = (total_reserve - lag(total_reserve)) / total_reserve * 100
   )
 
 military_presence_total_active_reserve[is.na(military_presence_total_active_reserve)] = 0
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We then join the total personnel dataframe to the expenditure dataframe by their year into a new dataframe. But, since our expenditure data only goes up to 2019, we are going to remove the 2020 and 2021 rows.</p>
+<p>Finally, we only want to keep our percentage change columns, since percentage change is the best way to compare expenditure and human capital.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5leHBlbmRpdHVyZV92c190b3RhbF9taWxpdGFyeSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSAlPiUgXG4gIGxlZnRfam9pbihVU19leHBlbmRpdHVyZV9kYXRhLCBieSA9IGMoJ1llYXInKSlcblxuZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgPC0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgJT4lIFxuICBzbGljZSgxOjEyKSAlPiUgXG4gIHNlbGVjdChZZWFyLCBwZXJjZW50YWdlX2RlbHRhX2FjdGl2ZSwgcGVyY2VudGFnZV9kZWx0YV9yZXNlcnZlLCBwZXJjZW50YWdlX2RlbHRhX2V4cGVuZGl0dXJlKVxuXG5gYGAifQ== -->
+<pre class="r"><code>
 expenditure_vs_total_military &lt;- military_presence_total_active_reserve %&gt;% 
   left_join(US_expenditure_data, by = c(&#39;Year&#39;))
 
 expenditure_vs_total_military &lt;- expenditure_vs_total_military %&gt;% 
   slice(1:12) %&gt;% 
   select(Year, percentage_delta_active, percentage_delta_reserve, percentage_delta_expenditure)
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Finally, with the data combined, we’re going to compare everything in a ggplot, which shows that despite a sudden increase in military personnel – both active duty and reserve – in military personnel in Obama’s second term, there was no sudden increase in military spending, which in fact saw a dip in spending.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5nZ3Bsb3QoKSArXG4gIGdlb21fbGluZShcbiAgICBkYXRhID0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnksXG4gICAgYWVzKHggPSBZZWFyLFxuICAgIHkgPSBwZXJjZW50YWdlX2RlbHRhX2FjdGl2ZSxcbiAgICBjb2xvciA9IFwiYmx1ZVwiKVxuICApICtcbiAgZ2VvbV9saW5lKFxuICAgIGRhdGEgPSBleHBlbmRpdHVyZV92c190b3RhbF9taWxpdGFyeSxcbiAgICBhZXMoeCA9IFllYXIsXG4gICAgeSA9IHBlcmNlbnRhZ2VfZGVsdGFfcmVzZXJ2ZSxcbiAgICBjb2xvciA9IFwicmVkXCIpXG4gICkgK1xuICBnZW9tX2xpbmUoXG4gICAgZGF0YSA9IGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5LFxuICAgIGFlcyh4ID0gWWVhcixcbiAgICB5ID0gcGVyY2VudGFnZV9kZWx0YV9leHBlbmRpdHVyZSlcbiAgKVxuXG5gYGAifQ== -->
+<pre class="r"><code>
 ggplot() +
   geom_line(
     data = expenditure_vs_total_military,
     aes(x = Year,
     y = percentage_delta_active,
-    color = &quot;blue&quot;,
-    label = &quot;hello&quot;)
+    color = &quot;blue&quot;)
   ) +
   geom_line(
     data = expenditure_vs_total_military,
@@ -350,77 +396,70 @@ ggplot() +
     data = expenditure_vs_total_military,
     aes(x = Year,
     y = percentage_delta_expenditure)
-  )</code></pre>
+  )
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiV2FybmluZzogSWdub3JpbmcgdW5rbm93biBhZXN0aGV0aWNzOiBsYWJlbFxuIn0= -->
-<pre><code>Warning: Ignoring unknown aesthetics: label</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?</p>
+<p>For this question, we want a military_presence dataframe that only includes the year 2021, the year the withdrawal occurred.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSBcbiAgZmlsdGVyKFllYXIgPT0gMjAyMSlcblxuI05vIGdvdmVybm1lbnQgZGF0YSBvbiBVLlMuIHRyb29wIGxldmVscyBpbiBBZmdoYW5pc3RhbiBoYXZlIGJlZW4gbWFkZSBhdmFpbGFibGUgc2luY2UgMjAxNy4gR292ZXJubWVudCBkYXRhIHJldHVybmVkIHRvIGJlaW5nIG1hZGUgcHVibGljbHkgYXZhaWxhYmxlIGluIERlY2VtYmVyIDIwMjEuXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIFxuICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lIFxuICBzdW1tYXJpemUoXG4gICAgdG90YWxfYXJteSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9uYXZ5ID0gc3VtKE5hdnlfQWN0aXZlX0R1dHkpLFxuICAgIHRvdGFsX21hcmluZV9jb3JwcyA9IHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpLFxuICAgIHRvdGFsX2Fpcl9mb3JjZSA9IHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpLFxuICAgIHRvdGFsX2NvYXN0X2d1YXJkID0gc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KSxcbiAgICB0b3RhbF9hY3RpdmVfZHV0eSA9IHRvdGFsX2FybXkgKyB0b3RhbF9uYXZ5ICsgdG90YWxfbWFyaW5lX2NvcnBzICsgdG90YWxfYWlyX2ZvcmNlICsgdG90YWxfY29hc3RfZ3VhcmRcbiAgKSAlPiUgXG4gIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfYWN0aXZlX2R1dHkpICU+JSBcbiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSBcbiAgZmlsdGVyKFllYXIgPT0gMjAyMSlcblxuYGBgIn0= -->
 <pre class="r"><code>
 military_presence_2021 &lt;- military_presence %&gt;% 
   filter(Year == 2021)
-
-#No government data on U.S. troop levels in Afghanistan have been made available since 2017. Government data returned to being made publicly available in December 2021.
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>No government data on U.S. troop levels in Afghanistan have been made available since 2017. Government data returned to being made publicly available in December 2021. So, the only way to see what happened to U.S. military personnel after Afghanistan is to see the increases in personnel in December.</p>
+<p>Just like in question 2, we will summarize the data into total active duty personnel. This time, however, we will be grouping the data by the personnel’s location and the date they were in that location.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV8yMDIxICU+JSBcbiAgZ3JvdXBfYnkoTG9jYXRpb24sIERhdGUpICU+JVxuICBzdW1tYXJpemUoXG4gICAgdG90YWxfYWN0aXZlID0gc3VtKEFybXlfQWN0aXZlX0R1dHkpICsgc3VtKE5hdnlfQWN0aXZlX0R1dHkpICsgc3VtKE1hcmluZV9Db3Jwc19BY3RpdmVfRHV0eSkgKyBzdW0oQWlyX0ZvcmNlX0FjdGl2ZV9EdXR5KSArIHN1bShDb2FzdF9HdWFyZF9BY3RpdmVfRHV0eSlcbiAgKSAlPiUgXG4gIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfYWN0aXZlKSAlPiUgXG4gIGFycmFuZ2UoTG9jYXRpb24sIERhdGUsIC5ieV9ncm91cCA9IFRSVUUpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
 military_presence_total_active_2021 &lt;- military_presence_2021 %&gt;% 
-  group_by(Location, Date) %&gt;% 
+  group_by(Location, Date) %&gt;%
   summarize(
-    total_army = sum(Army_Active_Duty),
-    total_navy = sum(Navy_Active_Duty),
-    total_marine_corps = sum(Marine_Corps_Active_Duty),
-    total_air_force = sum(Air_Force_Active_Duty),
-    total_coast_guard = sum(Coast_Guard_Active_Duty),
-    total_active_duty = total_army + total_navy + total_marine_corps + total_air_force + total_coast_guard
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
   ) %&gt;% 
-  select(Location, Date, total_active_duty) %&gt;% 
-  arrange(Location, Date, .by_group = TRUE)</code></pre>
+  select(Location, Date, total_active) %&gt;% 
+  arrange(Location, Date, .by_group = TRUE)
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ0xvY2F0aW9uJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
-<pre><code>`summarise()` has grouped output by &#39;Location&#39;. You can override using the `.groups` argument.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIFxuICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lIFxuICBzdW1tYXJpemUoXG4gICAgdG90YWxfYXJteSA9IHN1bShBcm15X1Jlc2VydmUpLFxuICAgIHRvdGFsX25hdnkgPSBzdW0oTmF2eV9SZXNlcnZlKSxcbiAgICB0b3RhbF9tYXJpbmVfY29ycHMgPSBzdW0oTWFyaW5lX0NvcnBzX1Jlc2VydmUpLFxuICAgIHRvdGFsX2Fpcl9mb3JjZSA9IHN1bShBaXJfRm9yY2VfUmVzZXJ2ZSksXG4gICAgdG90YWxfY29hc3RfZ3VhcmQgPSBzdW0oQ29hc3RfR3VhcmRfUmVzZXJ2ZSksXG4gICAgdG90YWxfcmVzZXJ2ZSA9IHRvdGFsX2FybXkgKyB0b3RhbF9uYXZ5ICsgdG90YWxfbWFyaW5lX2NvcnBzICsgdG90YWxfYWlyX2ZvcmNlICsgdG90YWxfY29hc3RfZ3VhcmRcbiAgKSAlPiUgXG4gIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfcmVzZXJ2ZSkgJT4lIFxuICBhcnJhbmdlKExvY2F0aW9uLCBEYXRlLCAuYnlfZ3JvdXAgPSBUUlVFKVxuYGBgIn0= -->
-<pre class="r"><code>military_presence_total_reserve_2021 &lt;- military_presence_2021 %&gt;% 
-  group_by(Location, Date) %&gt;% 
-  summarize(
-    total_army = sum(Army_Reserve),
-    total_navy = sum(Navy_Reserve),
-    total_marine_corps = sum(Marine_Corps_Reserve),
-    total_air_force = sum(Air_Force_Reserve),
-    total_coast_guard = sum(Coast_Guard_Reserve),
-    total_reserve = total_army + total_navy + total_marine_corps + total_air_force + total_coast_guard
-  ) %&gt;% 
-  select(Location, Date, total_reserve) %&gt;% 
-  arrange(Location, Date, .by_group = TRUE)</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The first row shows Afghanistan numbers in December 2021, but this isn’t helpful to us, so we’re just going to remove it.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMVstMSxdXG5cbmBgYCJ9 -->
+<pre class="r"><code>
+military_presence_total_active_2021 &lt;- military_presence_total_active_2021[-1,]
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiYHN1bW1hcmlzZSgpYCBoYXMgZ3JvdXBlZCBvdXRwdXQgYnkgJ0xvY2F0aW9uJy4gWW91IGNhbiBvdmVycmlkZSB1c2luZyB0aGUgYC5ncm91cHNgIGFyZ3VtZW50LlxuIn0= -->
-<pre><code>`summarise()` has grouped output by &#39;Location&#39;. You can override using the `.groups` argument.</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlXzIwMjEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlXzIwMjFbLTEsXVxubWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmVfMjAyMVstMSxdXG5cbiNSZW1vdmUgQWZnaGFuaXN0YW4gYmVjYXVzZSBpdCdzIG5vdCByZWxldmFudCB0byBvdXIgcXVlc3Rpb24uXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxICU+JSBcbiAgbXV0YXRlKGRlbHRhID0gdG90YWxfYWN0aXZlX2R1dHkgLSBsYWcodG90YWxfYWN0aXZlX2R1dHkpKSAlPiUgXG4gIHNlbGVjdCgtdG90YWxfYWN0aXZlX2R1dHkpXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxKV0gPSAwXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9yZXNlcnZlXzIwMjEgJT4lIFxuICBtdXRhdGUoZGVsdGEgPSB0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpKSAlPiUgXG4gIHNlbGVjdCgtdG90YWxfcmVzZXJ2ZSlcblxubWlsaXRhcnlfcHJlc2VuY2VfcmVzZXJ2ZV9kZWx0YV8yMDIxW2lzLm5hKG1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGFfMjAyMSldID0gMFxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSAlPiUgXG4gIGZpbHRlcihEYXRlID09IFwiMjAyMS0xMi0wMVwiKSAlPiUgXG4gIGFycmFuZ2UoZGVzYyhkZWx0YSkpXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhXzIwMjEgJT4lIFxuICBmaWx0ZXIoRGF0ZSA9PSBcIjIwMjEtMTItMDFcIikgJT4lIFxuICBhcnJhbmdlKGRlc2MoZGVsdGEpKVxuXG5gYGAifQ== -->
-<pre class="r"><code>military_presence_total_active_2021 &lt;- military_presence_total_active_2021[-1,]
-military_presence_total_reserve_2021 &lt;- military_presence_total_reserve_2021[-1,]
-
-#Remove Afghanistan because it&#39;s not relevant to our question.
-
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We will then use the lag() function to determine and create a column for the change in personnel in each location across the year. For the sake of potentially making a graphic for this information, we will turn any NAs into 0s.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMSAlPiUgXG4gIG11dGF0ZShkZWx0YSA9IHRvdGFsX2FjdGl2ZSAtIGxhZyh0b3RhbF9hY3RpdmUpKSAlPiUgXG4gIHNlbGVjdCgtdG90YWxfYWN0aXZlKVxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMVtpcy5uYShtaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSldID0gMFxuXG5gYGAifQ== -->
+<pre class="r"><code>
 military_presence_active_delta_2021 &lt;- military_presence_total_active_2021 %&gt;% 
-  mutate(delta = total_active_duty - lag(total_active_duty)) %&gt;% 
-  select(-total_active_duty)
+  mutate(delta = total_active - lag(total_active)) %&gt;% 
+  select(-total_active)
 
 military_presence_active_delta_2021[is.na(military_presence_active_delta_2021)] = 0
-
-military_presence_reserve_delta_2021 &lt;- military_presence_total_reserve_2021 %&gt;% 
-  mutate(delta = total_reserve - lag(total_reserve)) %&gt;% 
-  select(-total_reserve)
-
-military_presence_reserve_delta_2021[is.na(military_presence_reserve_delta_2021)] = 0
-
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We will then filter the data so we only see the month of December. Finally, we arrange the data to show the largest changes in the locations of military personnel.</p>
+<p>When we look at these data frames, we see that the greatest increases in military personnel are in an “unknown” location called ZZ-UNKNOWN. 2246 new people on active duty are in ZZ-UNKNOWN. According to The Washington Post, the U.S.’s military presence in Afghanistan totaled approximately 3,000 troops in April 2021.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSAlPiUgXG4gIGZpbHRlcihEYXRlID09IFwiMjAyMS0xMi0wMVwiKSAlPiUgXG4gIGFycmFuZ2UoZGVzYyhkZWx0YSkpXG5cbm1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhXzIwMjEgJT4lIFxuICBmaWx0ZXIoRGF0ZSA9PSBcIjIwMjEtMTItMDFcIikgJT4lIFxuICBhcnJhbmdlKGRlc2MoZGVsdGEpKVxuXG52aWV3KG1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxKVxudmlldyhtaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhXzIwMjEpXG5cbmBgYCJ9 -->
+<pre class="r"><code>
 military_presence_active_delta_2021 &lt;- military_presence_active_delta_2021 %&gt;% 
   filter(Date == &quot;2021-12-01&quot;) %&gt;% 
   arrange(desc(delta))
@@ -428,13 +467,16 @@ military_presence_active_delta_2021 &lt;- military_presence_active_delta_2021 %&
 military_presence_reserve_delta_2021 &lt;- military_presence_reserve_delta_2021 %&gt;% 
   filter(Date == &quot;2021-12-01&quot;) %&gt;% 
   arrange(desc(delta))
+
+view(military_presence_active_delta_2021)
+view(military_presence_reserve_delta_2021)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbGl2ZXJhYmxlIDAzIg0KYXV0aG9yOiBMeW5hIEJlbnRhaGFyICYgS2F0aWEgUGVjaGVua2luYQ0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KYGBge3J9DQojIFR1cm4gb2ZmIHNjaWVudGlmaWMgbm90YXRpb24NCm9wdGlvbnMoc2NpcGVuPTk5OSkNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShsdWJyaWRhdGUpDQpsaWJyYXJ5KGphbml0b3IpDQpsaWJyYXJ5KHJ2ZXN0KQ0KDQpgYGANCg0KUXVlc3Rpb24gMjogSG93IGRvZXMgdG90YWwgbWlsaXRhcnkgcGVyc29ubmVsIGNvcnJlbGF0ZSB3aXRoIG1pbGl0YXJ5IHNwZW5kaW5nPw0KDQpgYGB7cn0NCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdiIpDQoNCm1pbGl0YXJ5X3ByZXNlbmNlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSANCiAgbXV0YXRlKA0KICAgIFllYXIgPSB5ZWFyKERhdGUpLA0KICAgIE1vbnRoID0gbW9udGgoRGF0ZSwgbGFiZWwgPSBUUlVFLCBhYmJyID0gRkFMU0UpDQogICkNCg0KZXhwZW5kaXR1cmVfdXJsIDwtICJodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9QYXN0X21pbGl0YXJ5X2V4cGVuZGl0dXJlX2J5X2NvdW50cnkiDQoNCmV4cGVuZGl0dXJlX3RhYmxlcyA8LSBleHBlbmRpdHVyZV91cmwgJT4lIA0KICByZWFkX2h0bWwoKSAlPiUgDQogIGh0bWxfdGFibGUoKQ0KDQp0YWJsZTEgPC0gZXhwZW5kaXR1cmVfdGFibGVzW1sxXV0NCnRhYmxlMiA8LSBleHBlbmRpdHVyZV90YWJsZXNbWzJdXQ0KdGFibGUzIDwtIGV4cGVuZGl0dXJlX3RhYmxlc1tbM11dDQp0YWJsZTQgPC0gZXhwZW5kaXR1cmVfdGFibGVzW1s0XV0NCg0KVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSB0YWJsZTEgJT4lDQogIGxlZnRfam9pbih0YWJsZTIsIGJ5PWMoJ0NvdW50cnknPSdDb3VudHJ5JykpICU+JSANCiAgbGVmdF9qb2luKHRhYmxlMywgYnk9YygnQ291bnRyeSc9J0NvdW50cnknKSkgJT4lIA0KICBsZWZ0X2pvaW4odGFibGU0LCBieT1jKCdDb3VudHJ5Jz0nQ291bnRyeScpKQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIA0KICBzbGljZSgxOSkgJT4lIA0KICBzZWxlY3QoLWMoMSkpDQoNClVTX2V4cGVuZGl0dXJlX2RhdGEgPC0gVVNfZXhwZW5kaXR1cmVfZGF0YSAlPiUgDQogIHBpdm90X2xvbmdlcihjKDE6MzMpKQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIA0KICByZW5hbWUoIlllYXIiID0gIm5hbWUiLCAiTWlsbGlvbnNfb2ZfZG9sbGFycyIgPSAidmFsdWUiKSAlPiUgDQogIHNsaWNlKC1jKDE6MjEpKQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhJE1pbGxpb25zX29mX2RvbGxhcnMgPC0gZ3N1YigiLCIsIiIsVVNfZXhwZW5kaXR1cmVfZGF0YSRNaWxsaW9uc19vZl9kb2xsYXJzKQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhIDwtIGFzLmRhdGEuZnJhbWUoYXBwbHkoVVNfZXhwZW5kaXR1cmVfZGF0YSwgMiwgYXMubnVtZXJpYykpDQoNClVTX2V4cGVuZGl0dXJlX2RhdGEgPC0gVVNfZXhwZW5kaXR1cmVfZGF0YSAlPiUgDQogIG11dGF0ZSgNCiAgICBkZWx0YV9leHBlbmRpdHVyZSA9IE1pbGxpb25zX29mX2RvbGxhcnMgLSBsYWcoTWlsbGlvbnNfb2ZfZG9sbGFycyksDQogICAgcGVyY2VudGFnZV9kZWx0YV9leHBlbmRpdHVyZSA9IChNaWxsaW9uc19vZl9kb2xsYXJzIC0gbGFnKE1pbGxpb25zX29mX2RvbGxhcnMpKSAvIE1pbGxpb25zX29mX2RvbGxhcnMgKiAxMDANCiAgKQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhW2lzLm5hKFVTX2V4cGVuZGl0dXJlX2RhdGEpXSA9IDANCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIA0KICBncm91cF9ieShZZWFyKSAlPiUgDQogIHN1bW1hcml6ZSgNCiAgICB0b3RhbF9hcm15X2FjdGl2ZSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9uYXZ5X2FjdGl2ZSA9IHN1bShOYXZ5X0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9tYXJpbmVfY29ycHNfYWN0aXZlID0gc3VtKE1hcmluZV9Db3Jwc19BY3RpdmVfRHV0eSksDQogICAgdG90YWxfYWlyX2ZvcmNlX2FjdGl2ZSA9IHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX2NvYXN0X2d1YXJkX2FjdGl2ZSA9IHN1bShDb2FzdF9HdWFyZF9BY3RpdmVfRHV0eSksDQogICAgdG90YWxfYWN0aXZlX2R1dHkgPSB0b3RhbF9hcm15X2FjdGl2ZSArIHRvdGFsX25hdnlfYWN0aXZlICsgdG90YWxfbWFyaW5lX2NvcnBzX2FjdGl2ZSArIHRvdGFsX2Fpcl9mb3JjZV9hY3RpdmUgKyB0b3RhbF9jb2FzdF9ndWFyZF9hY3RpdmUsDQogICAgDQogICAgdG90YWxfYXJteV9yZXNlcnZlID0gc3VtKEFybXlfUmVzZXJ2ZSksDQogICAgdG90YWxfbmF2eV9yZXNlcnZlID0gc3VtKE5hdnlfUmVzZXJ2ZSksDQogICAgdG90YWxfbWFyaW5lX2NvcnBzX3Jlc2VydmUgPSBzdW0oTWFyaW5lX0NvcnBzX1Jlc2VydmUpLA0KICAgIHRvdGFsX2Fpcl9mb3JjZV9yZXNlcnZlID0gc3VtKEFpcl9Gb3JjZV9SZXNlcnZlKSwNCiAgICB0b3RhbF9jb2FzdF9ndWFyZF9yZXNlcnZlID0gc3VtKENvYXN0X0d1YXJkX1Jlc2VydmUpLA0KICAgIHRvdGFsX3Jlc2VydmUgPSB0b3RhbF9hcm15X3Jlc2VydmUgKyB0b3RhbF9uYXZ5X3Jlc2VydmUgKyB0b3RhbF9tYXJpbmVfY29ycHNfcmVzZXJ2ZSArIHRvdGFsX2Fpcl9mb3JjZV9yZXNlcnZlICsgdG90YWxfY29hc3RfZ3VhcmRfcmVzZXJ2ZQ0KICApICU+JSANCiAgc2VsZWN0KFllYXIsIHRvdGFsX2FjdGl2ZV9kdXR5LCB0b3RhbF9yZXNlcnZlKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSAlPiUgDQogIG11dGF0ZSgNCiAgICBkZWx0YV9hY3RpdmUgPSB0b3RhbF9hY3RpdmVfZHV0eSAtIGxhZyh0b3RhbF9hY3RpdmVfZHV0eSksDQogICAgZGVsdGFfcmVzZXJ2ZSA9IHRvdGFsX3Jlc2VydmUgLSBsYWcodG90YWxfcmVzZXJ2ZSksDQogICAgcGVyY2VudGFnZV9kZWx0YV9hY3RpdmUgPSAodG90YWxfYWN0aXZlX2R1dHkgLSBsYWcodG90YWxfYWN0aXZlX2R1dHkpKSAvIHRvdGFsX2FjdGl2ZV9kdXR5ICogMTAwLA0KICAgIHBlcmNlbnRhZ2VfZGVsdGFfcmVzZXJ2ZSA9ICh0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpKSAvIHRvdGFsX3Jlc2VydmUgKiAxMDANCiAgKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZVtpcy5uYShtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSldID0gMA0KDQpleHBlbmRpdHVyZV92c190b3RhbF9taWxpdGFyeSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSAlPiUgDQogIGxlZnRfam9pbihVU19leHBlbmRpdHVyZV9kYXRhLCBieSA9IGMoJ1llYXInKSkNCg0KZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgPC0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgJT4lIA0KICBzbGljZSgxOjEyKSAlPiUgDQogIHNlbGVjdChZZWFyLCBwZXJjZW50YWdlX2RlbHRhX2FjdGl2ZSwgcGVyY2VudGFnZV9kZWx0YV9yZXNlcnZlLCBwZXJjZW50YWdlX2RlbHRhX2V4cGVuZGl0dXJlKQ0KDQpnZ3Bsb3QoKSArDQogIGdlb21fbGluZSgNCiAgICBkYXRhID0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnksDQogICAgYWVzKHggPSBZZWFyLA0KICAgIHkgPSBwZXJjZW50YWdlX2RlbHRhX2FjdGl2ZSwNCiAgICBjb2xvciA9ICJibHVlIikNCiAgKSArDQogIGdlb21fbGluZSgNCiAgICBkYXRhID0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnksDQogICAgYWVzKHggPSBZZWFyLA0KICAgIHkgPSBwZXJjZW50YWdlX2RlbHRhX3Jlc2VydmUsDQogICAgY29sb3IgPSAicmVkIikNCiAgKSArDQogIGdlb21fbGluZSgNCiAgICBkYXRhID0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnksDQogICAgYWVzKHggPSBZZWFyLA0KICAgIHkgPSBwZXJjZW50YWdlX2RlbHRhX2V4cGVuZGl0dXJlKQ0KICApDQoNCmBgYA0KDQpRdWVzdGlvbiAzOiBXaGF0IGNvdW50cmllcyBzYXcgYW4gaW5jcmVhc2UgaW4gbWlsaXRhcnkgcHJlc2VuY2UgYWZ0ZXIgdGhlIHdpdGhkcmF3YWwgb2YgQWZnaGFuaXN0YW4/DQoNCmBgYHtyfQ0KDQptaWxpdGFyeV9wcmVzZW5jZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSANCiAgZmlsdGVyKFllYXIgPT0gMjAyMSkNCg0KI05vIGdvdmVybm1lbnQgZGF0YSBvbiBVLlMuIHRyb29wIGxldmVscyBpbiBBZmdoYW5pc3RhbiBoYXZlIGJlZW4gbWFkZSBhdmFpbGFibGUgc2luY2UgMjAxNy4gR292ZXJubWVudCBkYXRhIHJldHVybmVkIHRvIGJlaW5nIG1hZGUgcHVibGljbHkgYXZhaWxhYmxlIGluIERlY2VtYmVyIDIwMjEuDQoNCm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIA0KICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lIA0KICBzdW1tYXJpemUoDQogICAgdG90YWxfYXJteSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9uYXZ5ID0gc3VtKE5hdnlfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX21hcmluZV9jb3JwcyA9IHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX2Fpcl9mb3JjZSA9IHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpLA0KICAgIHRvdGFsX2NvYXN0X2d1YXJkID0gc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KSwNCiAgICB0b3RhbF9hY3RpdmVfZHV0eSA9IHRvdGFsX2FybXkgKyB0b3RhbF9uYXZ5ICsgdG90YWxfbWFyaW5lX2NvcnBzICsgdG90YWxfYWlyX2ZvcmNlICsgdG90YWxfY29hc3RfZ3VhcmQNCiAgKSAlPiUgDQogIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfYWN0aXZlX2R1dHkpICU+JSANCiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIA0KICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lIA0KICBzdW1tYXJpemUoDQogICAgdG90YWxfYXJteSA9IHN1bShBcm15X1Jlc2VydmUpLA0KICAgIHRvdGFsX25hdnkgPSBzdW0oTmF2eV9SZXNlcnZlKSwNCiAgICB0b3RhbF9tYXJpbmVfY29ycHMgPSBzdW0oTWFyaW5lX0NvcnBzX1Jlc2VydmUpLA0KICAgIHRvdGFsX2Fpcl9mb3JjZSA9IHN1bShBaXJfRm9yY2VfUmVzZXJ2ZSksDQogICAgdG90YWxfY29hc3RfZ3VhcmQgPSBzdW0oQ29hc3RfR3VhcmRfUmVzZXJ2ZSksDQogICAgdG90YWxfcmVzZXJ2ZSA9IHRvdGFsX2FybXkgKyB0b3RhbF9uYXZ5ICsgdG90YWxfbWFyaW5lX2NvcnBzICsgdG90YWxfYWlyX2ZvcmNlICsgdG90YWxfY29hc3RfZ3VhcmQNCiAgKSAlPiUgDQogIHNlbGVjdChMb2NhdGlvbiwgRGF0ZSwgdG90YWxfcmVzZXJ2ZSkgJT4lIA0KICBhcnJhbmdlKExvY2F0aW9uLCBEYXRlLCAuYnlfZ3JvdXAgPSBUUlVFKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMVstMSxdDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9yZXNlcnZlXzIwMjEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfcmVzZXJ2ZV8yMDIxWy0xLF0NCg0KI1JlbW92ZSBBZmdoYW5pc3RhbiBiZWNhdXNlIGl0J3Mgbm90IHJlbGV2YW50IHRvIG91ciBxdWVzdGlvbi4NCg0KbWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhXzIwMjEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlXzIwMjEgJT4lIA0KICBtdXRhdGUoZGVsdGEgPSB0b3RhbF9hY3RpdmVfZHV0eSAtIGxhZyh0b3RhbF9hY3RpdmVfZHV0eSkpICU+JSANCiAgc2VsZWN0KC10b3RhbF9hY3RpdmVfZHV0eSkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhXzIwMjFbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhXzIwMjEpXSA9IDANCg0KbWlsaXRhcnlfcHJlc2VuY2VfcmVzZXJ2ZV9kZWx0YV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX3Jlc2VydmVfMjAyMSAlPiUgDQogIG11dGF0ZShkZWx0YSA9IHRvdGFsX3Jlc2VydmUgLSBsYWcodG90YWxfcmVzZXJ2ZSkpICU+JSANCiAgc2VsZWN0KC10b3RhbF9yZXNlcnZlKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhXzIwMjFbaXMubmEobWlsaXRhcnlfcHJlc2VuY2VfcmVzZXJ2ZV9kZWx0YV8yMDIxKV0gPSAwDQoNCm1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX2FjdGl2ZV9kZWx0YV8yMDIxICU+JSANCiAgZmlsdGVyKERhdGUgPT0gIjIwMjEtMTItMDEiKSAlPiUgDQogIGFycmFuZ2UoZGVzYyhkZWx0YSkpDQoNCm1pbGl0YXJ5X3ByZXNlbmNlX3Jlc2VydmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV9yZXNlcnZlX2RlbHRhXzIwMjEgJT4lIA0KICBmaWx0ZXIoRGF0ZSA9PSAiMjAyMS0xMi0wMSIpICU+JSANCiAgYXJyYW5nZShkZXNjKGRlbHRhKSkNCg0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkRlbGl2ZXJhYmxlIDAzIg0KYXV0aG9yOiBMeW5hIEJlbnRhaGFyICYgS2F0aWEgUGVjaGVua2luYQ0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KYGBge3J9DQojIFR1cm4gb2ZmIHNjaWVudGlmaWMgbm90YXRpb24NCm9wdGlvbnMoc2NpcGVuPTk5OSkNCmxpYnJhcnkodGlkeXZlcnNlKQ0KbGlicmFyeShsdWJyaWRhdGUpDQpsaWJyYXJ5KGphbml0b3IpDQpsaWJyYXJ5KHJ2ZXN0KQ0KDQpgYGANCg0KUXVlc3Rpb24gMjogSG93IGRvZXMgdG90YWwgbWlsaXRhcnkgcGVyc29ubmVsIGNvcnJlbGF0ZSB3aXRoIG1pbGl0YXJ5IHNwZW5kaW5nPw0KDQpGaXJzdCwgd2UncmUgZ29pbmcgdG8gY2FsbCB1cCB0aGUgbWlsaXRhcnlfcHJlc2VuY2UuY3N2LCB3aGljaCBoYXMgdGhlIGNsZWFuZWQgdXAgZGF0YSBmcm9tIDIwMDggdG8gMjAyMSAod2UgaW5jbHVkZSB0aGUgeWVhciAyMDIxIGZvciB0aGUgc2FrZSBvZiBhbnN3ZXJpbmcgcXVlc3Rpb24gMykuIFRoZXJlIGFyZSB0d28gdGhpbmdzIHdlIHdhbnQgdG8gZG8gd2l0aCBkYXRhZnJhbWU6IGNyZWF0ZSBhIFllYXIgY29sdW1uIGFuZCBhIE1vbnRoIGNvbHVtbi4gVGhlIFllYXIgY29sdW1uIGlzIHRvIGJlIGFibGUgdG8gYmV0dGVyIGZpbHRlciBvdXIgZGF0YSBhY3Jvc3MgZGlmZmVyZW50IHllYXJzLg0KDQpgYGB7cn0NCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdiIpDQoNCm1pbGl0YXJ5X3ByZXNlbmNlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSANCiAgbXV0YXRlKA0KICAgIFllYXIgPSB5ZWFyKERhdGUpDQogICkNCmBgYA0KDQpUbyBzZWUgaG93IG1pbGl0YXJ5IHBlcnNvbm5lbCBkYXRhIGNvcnJlc3BvbmRzIHdpdGggbWlsaXRhcnkgc3BlbmRpbmcsIHdlIHdhbnQgbWlsaXRhcnkgZXhwZW5kaXR1cmUgZGF0YS4gV2lraXBlZGlhIHdhcyBhYmxlIHRvIGNyZWF0ZSB0YWJsZXMgdGhhdCBzaG93cyBtaWxpdGFyeSBleHBlbmRpdHVyZSBieSBjb3VudHJ5LCBpbiBtaWxsaW9ucyBvZiBkb2xsYXJzLCBpbiAyMDIyIGRvbGxhcnMsIHVwIHRvIDIwMTkuIFdpa2lwZWRpYSBkZXJpdmVzIHRoaXMgaW5mb3JtYXRpb24gZnJvbSB0aGUgU3RvY2tob2xtIEludGVybmF0aW9uYWwgUGVhY2UgUmVzZWFyY2ggSW5zdGl0dXRlIGRhdGFiYXNlLg0KDQpXZSBjYWxsIHRoaXMgdXAgaW50byBhIHZhbHVlIGNhbGxlZCBleHBlbmRpdHVyZV91cmwsIHJlYWQgdGhlIHRhYmxlcyBpbiB0aGUgc291cmNlIGNvZGUsIGFuZCBjb21iaW5lIHRoZSBsYXN0IHR3byB0YWJsZXMsIHdoaWNoIGhhdmUgZGF0YSBmcm9tIDIwMDAgdG8gMjAxOSAodGhlIGZpcnN0IHR3byB0YWJsZXMgc2hvdyBleHBlbmRpdHVyZXMgZnJvbSBiZWZvcmUgdGhhdCkuDQoNCmBgYHtyfQ0KDQpleHBlbmRpdHVyZV91cmwgPC0gImh0dHBzOi8vZW4ud2lraXBlZGlhLm9yZy93aWtpL1Bhc3RfbWlsaXRhcnlfZXhwZW5kaXR1cmVfYnlfY291bnRyeSINCg0KZXhwZW5kaXR1cmVfdGFibGVzIDwtIGV4cGVuZGl0dXJlX3VybCAlPiUgDQogIHJlYWRfaHRtbCgpICU+JSANCiAgaHRtbF90YWJsZSgpDQoNCnRhYmxlMyA8LSBleHBlbmRpdHVyZV90YWJsZXNbWzNdXQ0KdGFibGU0IDwtIGV4cGVuZGl0dXJlX3RhYmxlc1tbNF1dDQoNClVTX2V4cGVuZGl0dXJlX2RhdGEgPC0gdGFibGUzICU+JSANCiAgbGVmdF9qb2luKHRhYmxlNCwgYnk9YygnQ291bnRyeSc9J0NvdW50cnknKSkNCiAgDQpgYGANCg0KV2Ugb25seSB3YW50IFUuUy4gZXhwZW5kaXR1cmUgZGF0YSwgc28gd2Ugc2xpY2UgdGhlIFUuUy4gcm93IGFuZCByZW1vdmUgdGhlIENvdW50cnkgY29sdW1uICh3ZSBrbm93IHdoYXQgY291bnRyeSBpdCBpcykuDQoNCmBgYHtyfQ0KDQpVU19leHBlbmRpdHVyZV9kYXRhIDwtIFVTX2V4cGVuZGl0dXJlX2RhdGEgJT4lIA0KICBzbGljZSgxOCkgJT4lIA0KICBzZWxlY3QoLWMoMSkpDQoNCmBgYA0KDQpXZSB0aGVuIHVzZSB0aGUgcGl2b3RfbG9uZ2VyKCkgZnVuY3Rpb24gdG8gZmxpcCB0aGUgY29sdW1ucyBhbmQgcm93cyB0byBtYWtlIHRoZSBkYXRhIG1vcmUgdXNhYmxlLg0KDQpgYGB7cn0NCg0KVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBVU19leHBlbmRpdHVyZV9kYXRhICU+JSANCiAgcGl2b3RfbG9uZ2VyKGMoMToyMCkpDQoNCmBgYA0KDQpBbHNvIHRvIG1ha2UgdGhlIGRhdGEgbW9yZSB1c2VhYmxlLCB3ZSdyZSBnb2luZyB0byBuYW1lIHRoZSBmaXJzdCBjb2x1bW4gWWVhciBhbmQgdGhlIHNlY29uZCBjb2x1bW4gTWlsbGlvbnNfb2ZfZG9sbGFycy4gQXQgdGhlIHNhbWUgdGltZSwgc2luY2Ugd2Ugb25seSBuZWVkIDIwMDgtMjAxOSBkYXRhLCB3ZSdyZSBnb2luZyB0byByZW1vdmUgdGhlIGZpcnN0IDggcm93cy4NCg0KYGBge3J9DQoNClVTX2V4cGVuZGl0dXJlX2RhdGEgPC0gVVNfZXhwZW5kaXR1cmVfZGF0YSAlPiUgDQogIHJlbmFtZSgiWWVhciIgPSAibmFtZSIsICJNaWxsaW9uc19vZl9kb2xsYXJzIiA9ICJ2YWx1ZSIpICU+JSANCiAgc2xpY2UoLWMoMTo4KSkNCg0KYGBgDQoNCkxhc3QgdGhpbmcgd2UgbmVlZCB0byBkbyBpcyBkZWZpbmUgb3VyIGRhdGEgdHlwZXMuLiBSaWdodCBub3csIFVTX2V4cGVuZGl0dXJlX2RhdGEgb25seSBoYXMgY2hhcmFjdGVyIGRhdGEgdHlwZXMuIE1pbGxpb25zX29mX2RvbGxhcnMgbmVlZHMgdG8gYmUgbnVtZXJpYy4gQnV0LCBpdCdzIG5vdCBwb3NzaWJsZSB0byBtYWtlIHRoZSBNaWxsaW9uc19vZl9kb2xsYXJzIGNvbHVtbiBudW1lcmljLCBiZWNhdXNlIHRoZXJlIGFyZSBjaGFyYWN0ZXJzIGluIHRoZSBjZWxsczsgbmFtZWx5LCBjb21tYXMuDQoNCldlIHdpbGwgdXNlIHRoZSBnc3ViKCkgZnVuY3Rpb24gdG8gcmVtb3ZlIHRoZSBjb21tYXMuIFRoZW4gd2UgY2FuIG1ha2UgdGhlIGNvbHVtbiBudW1lcmljLg0KDQpgYGB7cn0NCg0KVVNfZXhwZW5kaXR1cmVfZGF0YSRNaWxsaW9uc19vZl9kb2xsYXJzIDwtIGdzdWIoIiwiLCIiLFVTX2V4cGVuZGl0dXJlX2RhdGEkTWlsbGlvbnNfb2ZfZG9sbGFycykNCg0KVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBhcy5kYXRhLmZyYW1lKGFwcGx5KFVTX2V4cGVuZGl0dXJlX2RhdGEsIDIsIGFzLm51bWVyaWMpKQ0KYGBgDQoNClVzaW5nIHRoZSBsYWcoKSBmdW5jdGlvbiwgd2UgY2FuIGRldGVybWluZSBhbmQgY3JlYXRlIGEgY29sdW1uIHNob3dpbmcgdGhlIGNoYW5nZSBpbiBtaWxpdGFyeSBleHBlbmRpdHVyZSBlYWNoIHllYXIsIGFuZCB0aGVuIGRldGVybWluZSBhbmQgY3JlYXRlIGEgY29sdW1uIHNob3dpbmcgdGhlIHBlcmNlbnRhZ2UgY2hhbmdlLiBGb3IgdGhlIHNha2Ugb2Ygc2hvd2luZyB0aGlzIGluZm9ybWF0aW9uIGluIGEgZ3JhcGhpYyBsYXRlciwgd2Ugd2lsbCB0dXJuIGFueSBOQXMgaW50byAwLg0KDQpgYGB7cn0NCg0KVVNfZXhwZW5kaXR1cmVfZGF0YSA8LSBVU19leHBlbmRpdHVyZV9kYXRhICU+JSANCiAgbXV0YXRlKA0KICAgIGRlbHRhX2V4cGVuZGl0dXJlID0gTWlsbGlvbnNfb2ZfZG9sbGFycyAtIGxhZyhNaWxsaW9uc19vZl9kb2xsYXJzKSwNCiAgICBwZXJjZW50YWdlX2RlbHRhX2V4cGVuZGl0dXJlID0gKE1pbGxpb25zX29mX2RvbGxhcnMgLSBsYWcoTWlsbGlvbnNfb2ZfZG9sbGFycykpIC8gTWlsbGlvbnNfb2ZfZG9sbGFycyAqIDEwMA0KICApDQoNClVTX2V4cGVuZGl0dXJlX2RhdGFbaXMubmEoVVNfZXhwZW5kaXR1cmVfZGF0YSldID0gMA0KDQpgYGANCg0KV2l0aCBvdXIgZXhwZW5kaXR1cmUgZGF0YSBvcmdhbml6ZWQsIHdlIG5vdyB3YW50IHRvIGtub3cgdGhlIHRvdGFsIG1pbGl0YXJ5IHBlcnNvbm5lbCwgYm90aCBhY3RpdmUgYW5kIGluIHJlc2VydmUsIHBlciB5ZWFyLiBXZSBzdW1tYXJpemUgdGhlIGRhdGEgYnkgc3VtbWFyaXppbmcgdGhlIG1pbGl0YXJ5IHBlcnNvbm5lbCBmcm9tIHRoZWlyIGRpZmZlcmVudCBicmFuY2hlcyBhbmQgc2VwYXJhdGluZyB0aGVtIGJ5IGFjdGl2ZSBkdXR5IGFuZCByZXNlcnZlIGNvbHVtbnMuIFRoZW4sIHdlIGRldGVybWluZSBhbmQgY3JlYXRlIGEgY29sdW1uIHNob3dpbmcgdGhlIGNoYW5nZSBpbiB0b3RhbCBwZXJzb25uZWwgcGVyIHllYXIsIGFuZCBkZXRlcm1pbmUgYW5kIGNyZWF0ZSBhIGNvbHVtbiBzaG93aW5nIHRoZSBwZXJjZW50YWdlIGNoYW5nZS4gV2UgZG8gdGhlIHNhbWUgdGhpbmcgYXMgdGhlIGV4cGVuZGl0dXJlIGRhdGEgaW4gdHVybmluZyBhbnkgTkFzIGludG8gMC4NCg0KYGBge3J9DQoNCm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV9yZXNlcnZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSANCiAgZ3JvdXBfYnkoWWVhcikgJT4lIA0KICBzdW1tYXJpemUoDQogICAgdG90YWxfYWN0aXZlID0gc3VtKEFybXlfQWN0aXZlX0R1dHkpICsgc3VtKE5hdnlfQWN0aXZlX0R1dHkpICsgc3VtKE1hcmluZV9Db3Jwc19BY3RpdmVfRHV0eSkgKyBzdW0oQWlyX0ZvcmNlX0FjdGl2ZV9EdXR5KSArIHN1bShDb2FzdF9HdWFyZF9BY3RpdmVfRHV0eSksDQogICAgDQogICAgdG90YWxfcmVzZXJ2ZSA9IHN1bShBcm15X1Jlc2VydmUpICsgc3VtKE5hdnlfUmVzZXJ2ZSkgKyBzdW0oTWFyaW5lX0NvcnBzX1Jlc2VydmUpICsgc3VtKEFpcl9Gb3JjZV9SZXNlcnZlKSArIHN1bShDb2FzdF9HdWFyZF9SZXNlcnZlKQ0KICApICU+JSANCiAgc2VsZWN0KFllYXIsIHRvdGFsX2FjdGl2ZSwgdG90YWxfcmVzZXJ2ZSkNCg0KbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgPC0gbWlsaXRhcnlfcHJlc2VuY2VfdG90YWxfYWN0aXZlX3Jlc2VydmUgJT4lIA0KICBtdXRhdGUoDQogICAgZGVsdGFfYWN0aXZlID0gdG90YWxfYWN0aXZlIC0gbGFnKHRvdGFsX2FjdGl2ZSksDQogICAgZGVsdGFfcmVzZXJ2ZSA9IHRvdGFsX3Jlc2VydmUgLSBsYWcodG90YWxfcmVzZXJ2ZSksDQogICAgcGVyY2VudGFnZV9kZWx0YV9hY3RpdmUgPSAodG90YWxfYWN0aXZlIC0gbGFnKHRvdGFsX2FjdGl2ZSkpIC8gdG90YWxfYWN0aXZlICogMTAwLA0KICAgIHBlcmNlbnRhZ2VfZGVsdGFfcmVzZXJ2ZSA9ICh0b3RhbF9yZXNlcnZlIC0gbGFnKHRvdGFsX3Jlc2VydmUpKSAvIHRvdGFsX3Jlc2VydmUgKiAxMDANCiAgKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZVtpcy5uYShtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSldID0gMA0KDQpgYGANCg0KV2UgdGhlbiBqb2luIHRoZSB0b3RhbCBwZXJzb25uZWwgZGF0YWZyYW1lIHRvIHRoZSBleHBlbmRpdHVyZSBkYXRhZnJhbWUgYnkgdGhlaXIgeWVhciBpbnRvIGEgbmV3IGRhdGFmcmFtZS4gQnV0LCBzaW5jZSBvdXIgZXhwZW5kaXR1cmUgZGF0YSBvbmx5IGdvZXMgdXAgdG8gMjAxOSwgd2UgYXJlIGdvaW5nIHRvIHJlbW92ZSB0aGUgMjAyMCBhbmQgMjAyMSByb3dzLg0KDQpGaW5hbGx5LCB3ZSBvbmx5IHdhbnQgdG8ga2VlcCBvdXIgcGVyY2VudGFnZSBjaGFuZ2UgY29sdW1ucywgc2luY2UgcGVyY2VudGFnZSBjaGFuZ2UgaXMgdGhlIGJlc3Qgd2F5IHRvIGNvbXBhcmUgZXhwZW5kaXR1cmUgYW5kIGh1bWFuIGNhcGl0YWwuDQoNCmBgYHtyfQ0KDQpleHBlbmRpdHVyZV92c190b3RhbF9taWxpdGFyeSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfcmVzZXJ2ZSAlPiUgDQogIGxlZnRfam9pbihVU19leHBlbmRpdHVyZV9kYXRhLCBieSA9IGMoJ1llYXInKSkNCg0KZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgPC0gZXhwZW5kaXR1cmVfdnNfdG90YWxfbWlsaXRhcnkgJT4lIA0KICBzbGljZSgxOjEyKSAlPiUgDQogIHNlbGVjdChZZWFyLCBwZXJjZW50YWdlX2RlbHRhX2FjdGl2ZSwgcGVyY2VudGFnZV9kZWx0YV9yZXNlcnZlLCBwZXJjZW50YWdlX2RlbHRhX2V4cGVuZGl0dXJlKQ0KDQpgYGANCg0KRmluYWxseSwgd2l0aCB0aGUgZGF0YSBjb21iaW5lZCwgd2UncmUgZ29pbmcgdG8gY29tcGFyZSBldmVyeXRoaW5nIGluIGEgZ2dwbG90LCB3aGljaCBzaG93cyB0aGF0IGRlc3BpdGUgYSBzdWRkZW4gaW5jcmVhc2UgaW4gbWlsaXRhcnkgcGVyc29ubmVsIC0tIGJvdGggYWN0aXZlIGR1dHkgYW5kIHJlc2VydmUgLS0gaW4gbWlsaXRhcnkgcGVyc29ubmVsIGluIE9iYW1hJ3Mgc2Vjb25kIHRlcm0sIHRoZXJlIHdhcyBubyBzdWRkZW4gaW5jcmVhc2UgaW4gbWlsaXRhcnkgc3BlbmRpbmcsIHdoaWNoIGluIGZhY3Qgc2F3IGEgZGlwIGluIHNwZW5kaW5nLg0KDQpgYGB7cn0NCg0KZ2dwbG90KCkgKw0KICBnZW9tX2xpbmUoDQogICAgZGF0YSA9IGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5LA0KICAgIGFlcyh4ID0gWWVhciwNCiAgICB5ID0gcGVyY2VudGFnZV9kZWx0YV9hY3RpdmUsDQogICAgY29sb3IgPSAiYmx1ZSIpDQogICkgKw0KICBnZW9tX2xpbmUoDQogICAgZGF0YSA9IGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5LA0KICAgIGFlcyh4ID0gWWVhciwNCiAgICB5ID0gcGVyY2VudGFnZV9kZWx0YV9yZXNlcnZlLA0KICAgIGNvbG9yID0gInJlZCIpDQogICkgKw0KICBnZW9tX2xpbmUoDQogICAgZGF0YSA9IGV4cGVuZGl0dXJlX3ZzX3RvdGFsX21pbGl0YXJ5LA0KICAgIGFlcyh4ID0gWWVhciwNCiAgICB5ID0gcGVyY2VudGFnZV9kZWx0YV9leHBlbmRpdHVyZSkNCiAgKQ0KDQpgYGANCg0KUXVlc3Rpb24gMzogV2hhdCBjb3VudHJpZXMgc2F3IGFuIGluY3JlYXNlIGluIG1pbGl0YXJ5IHByZXNlbmNlIGFmdGVyIHRoZSB3aXRoZHJhd2FsIG9mIEFmZ2hhbmlzdGFuPw0KDQpGb3IgdGhpcyBxdWVzdGlvbiwgd2Ugd2FudCBhIG1pbGl0YXJ5X3ByZXNlbmNlIGRhdGFmcmFtZSB0aGF0IG9ubHkgaW5jbHVkZXMgdGhlIHllYXIgMjAyMSwgdGhlIHllYXIgdGhlIHdpdGhkcmF3YWwgb2NjdXJyZWQuDQoNCmBgYHtyfQ0KDQptaWxpdGFyeV9wcmVzZW5jZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JSANCiAgZmlsdGVyKFllYXIgPT0gMjAyMSkNCg0KYGBgDQoNCk5vIGdvdmVybm1lbnQgZGF0YSBvbiBVLlMuIHRyb29wIGxldmVscyBpbiBBZmdoYW5pc3RhbiBoYXZlIGJlZW4gbWFkZSBhdmFpbGFibGUgc2luY2UgMjAxNy4gR292ZXJubWVudCBkYXRhIHJldHVybmVkIHRvIGJlaW5nIG1hZGUgcHVibGljbHkgYXZhaWxhYmxlIGluIERlY2VtYmVyIDIwMjEuIFNvLCB0aGUgb25seSB3YXkgdG8gc2VlIHdoYXQgaGFwcGVuZWQgdG8gVS5TLiBtaWxpdGFyeSBwZXJzb25uZWwgYWZ0ZXIgQWZnaGFuaXN0YW4gaXMgdG8gc2VlIHRoZSBpbmNyZWFzZXMgaW4gcGVyc29ubmVsIGluIERlY2VtYmVyLg0KDQpKdXN0IGxpa2UgaW4gcXVlc3Rpb24gMiwgd2Ugd2lsbCBzdW1tYXJpemUgdGhlIGRhdGEgaW50byB0b3RhbCBhY3RpdmUgZHV0eSBwZXJzb25uZWwuICBUaGlzIHRpbWUsIGhvd2V2ZXIsIHdlIHdpbGwgYmUgZ3JvdXBpbmcgdGhlIGRhdGEgYnkgdGhlIHBlcnNvbm5lbCdzIGxvY2F0aW9uIGFuZCB0aGUgZGF0ZSB0aGV5IHdlcmUgaW4gdGhhdCBsb2NhdGlvbi4NCg0KYGBge3J9DQoNCm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlXzIwMjEgJT4lIA0KICBncm91cF9ieShMb2NhdGlvbiwgRGF0ZSkgJT4lDQogIHN1bW1hcml6ZSgNCiAgICB0b3RhbF9hY3RpdmUgPSBzdW0oQXJteV9BY3RpdmVfRHV0eSkgKyBzdW0oTmF2eV9BY3RpdmVfRHV0eSkgKyBzdW0oTWFyaW5lX0NvcnBzX0FjdGl2ZV9EdXR5KSArIHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpICsgc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KQ0KICApICU+JSANCiAgc2VsZWN0KExvY2F0aW9uLCBEYXRlLCB0b3RhbF9hY3RpdmUpICU+JSANCiAgYXJyYW5nZShMb2NhdGlvbiwgRGF0ZSwgLmJ5X2dyb3VwID0gVFJVRSkNCg0KYGBgDQoNClRoZSBmaXJzdCByb3cgc2hvd3MgQWZnaGFuaXN0YW4gbnVtYmVycyBpbiBEZWNlbWJlciAyMDIxLCBidXQgdGhpcyBpc24ndCBoZWxwZnVsIHRvIHVzLCBzbyB3ZSdyZSBqdXN0IGdvaW5nIHRvIHJlbW92ZSBpdC4NCg0KYGBge3J9DQoNCm1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxIDwtIG1pbGl0YXJ5X3ByZXNlbmNlX3RvdGFsX2FjdGl2ZV8yMDIxWy0xLF0NCg0KYGBgDQoNCldlIHdpbGwgdGhlbiB1c2UgdGhlIGxhZygpIGZ1bmN0aW9uIHRvIGRldGVybWluZSBhbmQgY3JlYXRlIGEgY29sdW1uIGZvciB0aGUgY2hhbmdlIGluIHBlcnNvbm5lbCBpbiBlYWNoIGxvY2F0aW9uIGFjcm9zcyB0aGUgeWVhci4gRm9yIHRoZSBzYWtlIG9mIHBvdGVudGlhbGx5IG1ha2luZyBhIGdyYXBoaWMgZm9yIHRoaXMgaW5mb3JtYXRpb24sIHdlIHdpbGwgdHVybiBhbnkgTkFzIGludG8gMHMuDQoNCmBgYHtyfQ0KDQptaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSA8LSBtaWxpdGFyeV9wcmVzZW5jZV90b3RhbF9hY3RpdmVfMjAyMSAlPiUgDQogIG11dGF0ZShkZWx0YSA9IHRvdGFsX2FjdGl2ZSAtIGxhZyh0b3RhbF9hY3RpdmUpKSAlPiUgDQogIHNlbGVjdCgtdG90YWxfYWN0aXZlKQ0KDQptaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMVtpcy5uYShtaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSldID0gMA0KDQpgYGANCg0KV2Ugd2lsbCB0aGVuIGZpbHRlciB0aGUgZGF0YSBzbyB3ZSBvbmx5IHNlZSB0aGUgbW9udGggb2YgRGVjZW1iZXIuIEZpbmFsbHksIHdlIGFycmFuZ2UgdGhlIGRhdGEgdG8gc2hvdyB0aGUgbGFyZ2VzdCBjaGFuZ2VzIGluIHRoZSBsb2NhdGlvbnMgb2YgbWlsaXRhcnkgcGVyc29ubmVsLg0KDQpXaGVuIHdlIGxvb2sgYXQgdGhlc2UgZGF0YSBmcmFtZXMsIHdlIHNlZSB0aGF0IHRoZSBncmVhdGVzdCBpbmNyZWFzZXMgaW4gbWlsaXRhcnkgcGVyc29ubmVsIGFyZSBpbiBhbiAidW5rbm93biIgbG9jYXRpb24gY2FsbGVkIFpaLVVOS05PV04uIDIyNDYgbmV3IHBlb3BsZSBvbiBhY3RpdmUgZHV0eSBhcmUgaW4gWlotVU5LTk9XTi4gQWNjb3JkaW5nIHRvIFRoZSBXYXNoaW5ndG9uIFBvc3QsIHRoZSBVLlMuJ3MgbWlsaXRhcnkgcHJlc2VuY2UgaW4gQWZnaGFuaXN0YW4gdG90YWxlZCBhcHByb3hpbWF0ZWx5IDMsMDAwIHRyb29wcyBpbiBBcHJpbCAyMDIxLg0KDQpgYGB7cn0NCg0KbWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhXzIwMjEgPC0gbWlsaXRhcnlfcHJlc2VuY2VfYWN0aXZlX2RlbHRhXzIwMjEgJT4lIA0KICBmaWx0ZXIoRGF0ZSA9PSAiMjAyMS0xMi0wMSIpICU+JSANCiAgYXJyYW5nZShkZXNjKGRlbHRhKSkNCg0KdmlldyhtaWxpdGFyeV9wcmVzZW5jZV9hY3RpdmVfZGVsdGFfMjAyMSkNCg0KYGBgDQoNCg==</div>
 
 
 
