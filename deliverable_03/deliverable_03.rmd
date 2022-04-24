@@ -18,8 +18,6 @@ library(rvest)
 
 ```
 
-Question 2: How does total military personnel correlate with military spending?
-
 First, we're going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021 (we include the year 2021 for the sake of answering question 3). There are two things we want to do with dataframe: create a Year column and a Month column. The Year column is to be able to better filter our data across different years.
 
 ```{r}
@@ -31,6 +29,33 @@ military_presence <- military_presence %>%
     Year = year(Date)
   )
 ```
+
+Question 1:What are the biggest shifts in the locations of military personnel between 2008-2016, either into or out of a country?
+
+We are analyzing the shifts in military during the Obama administration so we are looking at the start of his first presidential term and comparing it to the last year of his second term. We are only looking at active military so we summarize by that. And then using lag function we find out the change in number of troops. We arrange in descending order to see the major changes. 
+
+The results: Top 10 states states that experienced the increase in military personnel in 2016 compared to 2008 were California, Texas, North Carolina, Virginia, Georgia, Florida, Washington, Hawaii, Colorado, Kentucky. 
+Top 10 oversees locations that saw an increase were: Armed Forces Pacific, Armed Forces Europe, Japan, Germany, South Korea, Italy, United Kingdom, Bahrain, Afghanistan, Guam. 
+
+Top 3 locations with a somewhat significant decrease in the US military presence, according to the data: Iraq, Kuwait, Philippines. 
+
+```{r}
+
+obama_08_and_16 <- military_presence %>%
+  filter(Year == "2008" | Year == "2016")%>%
+group_by(Location, Year)%>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)) 
+
+obama_08_and_16 <- obama_08_and_16%>%
+  arrange(Location,Year, .by_group = TRUE)%>%
+  mutate(change= total_active - lag(total_active))%>%
+arrange(desc(change))
+
+```
+
+
+Question 2: How does total military personnel correlate with military spending?
 
 To see how military personnel data corresponds with military spending, we want military expenditure data. Wikipedia was able to create tables that shows military expenditure by country, in millions of dollars, in 2022 dollars, up to 2019. Wikipedia derives this information from the Stockholm International Peace Research Institute database.
 
