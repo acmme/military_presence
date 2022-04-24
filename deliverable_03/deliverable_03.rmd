@@ -16,6 +16,12 @@ library(lubridate)
 
 ```
 
+Question 2:
+
+
+
+Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
+
 ```{r}
 military_presence <- read_csv("military_presence.csv")
 
@@ -63,26 +69,23 @@ military_presence_total_reserve <- military_presence_total_reserve[-1,]
 
 military_presence_active_delta <- military_presence_total_active %>% 
   mutate(delta = total_active_duty - lag(total_active_duty)) %>% 
-  select(-total_active_duty) %>% 
-  mutate(
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
+  select(-total_active_duty)
 
 military_presence_active_delta[is.na(military_presence_active_delta)] = 0
 
 military_presence_reserve_delta <- military_presence_total_reserve %>% 
   mutate(delta = total_reserve - lag(total_reserve)) %>% 
-  select(-total_reserve) %>% 
-  mutate(
-    Month = month(Date, label = TRUE, abbr = FALSE)
-  )
+  select(-total_reserve)
 
-military_presence_active_delta[is.na(military_presence_active_delta)] = 0
 military_presence_reserve_delta[is.na(military_presence_reserve_delta)] = 0
 
-ggplot() + geom_line(data=military_presence_active_delta, aes(x=Date, y=delta, group=Location, color=Location)) + theme(legend.position = "None")
+military_presence_active_delta <- military_presence_active_delta %>% 
+  filter(Date == "2021-12-01") %>% 
+  arrange(desc(delta))
 
-ggplot() + geom_line(data=military_presence_reserve_delta, aes(x=Date, y=delta, group=Location, color=Location)) + theme(legend.position = "None")
+military_presence_reserve_delta <- military_presence_reserve_delta %>% 
+  filter(Date == "2021-12-01") %>% 
+  arrange(desc(delta))
 
 ```
 
