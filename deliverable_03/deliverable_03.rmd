@@ -13,16 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=999)
 library(tidyverse)
 library(lubridate)
+library(janitor)
+library(rvest)
 
 ```
 
-Question 2:
-
-
-
-Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
+Question 2: How does total military personnel correlate with military spending?
 
 ```{r}
+
 military_presence <- read_csv("military_presence.csv")
 
 military_presence <- military_presence %>% 
@@ -31,12 +30,112 @@ military_presence <- military_presence %>%
     Month = month(Date, label = TRUE, abbr = FALSE)
   )
 
+expenditure_url <- "https://en.wikipedia.org/wiki/Past_military_expenditure_by_country"
+
+expenditure_tables <- expenditure_url %>% 
+  read_html() %>% 
+  html_table()
+
+table1 <- expenditure_tables[[1]]
+table2 <- expenditure_tables[[2]]
+table3 <- expenditure_tables[[3]]
+table4 <- expenditure_tables[[4]]
+
+US_expenditure_data <- table1 %>%
+  left_join(table2, by=c('Country'='Country')) %>% 
+  left_join(table3, by=c('Country'='Country')) %>% 
+  left_join(table4, by=c('Country'='Country'))
+
+US_expenditure_data <- US_expenditure_data %>% 
+  slice(19) %>% 
+  select(-c(1))
+
+US_expenditure_data <- US_expenditure_data %>% 
+  pivot_longer(c(1:33))
+
+US_expenditure_data <- US_expenditure_data %>% 
+  rename("Year" = "name", "Millions_of_dollars" = "value") %>% 
+  slice(-c(1:21))
+
+US_expenditure_data$Millions_of_dollars <- gsub(",","",US_expenditure_data$Millions_of_dollars)
+
+US_expenditure_data <- as.data.frame(apply(US_expenditure_data, 2, as.numeric))
+
+US_expenditure_data <- US_expenditure_data %>% 
+  mutate(
+    delta_expenditure = Millions_of_dollars - lag(Millions_of_dollars),
+    percentage_delta_expenditure = (Millions_of_dollars - lag(Millions_of_dollars)) / Millions_of_dollars * 100
+  )
+
+US_expenditure_data[is.na(US_expenditure_data)] = 0
+
+military_presence_total_active_reserve <- military_presence %>% 
+  group_by(Year) %>% 
+  summarize(
+    total_army_active = sum(Army_Active_Duty),
+    total_navy_active = sum(Navy_Active_Duty),
+    total_marine_corps_active = sum(Marine_Corps_Active_Duty),
+    total_air_force_active = sum(Air_Force_Active_Duty),
+    total_coast_guard_active = sum(Coast_Guard_Active_Duty),
+    total_active_duty = total_army_active + total_navy_active + total_marine_corps_active + total_air_force_active + total_coast_guard_active,
+    
+    total_army_reserve = sum(Army_Reserve),
+    total_navy_reserve = sum(Navy_Reserve),
+    total_marine_corps_reserve = sum(Marine_Corps_Reserve),
+    total_air_force_reserve = sum(Air_Force_Reserve),
+    total_coast_guard_reserve = sum(Coast_Guard_Reserve),
+    total_reserve = total_army_reserve + total_navy_reserve + total_marine_corps_reserve + total_air_force_reserve + total_coast_guard_reserve
+  ) %>% 
+  select(Year, total_active_duty, total_reserve)
+
+military_presence_total_active_reserve <- military_presence_total_active_reserve %>% 
+  mutate(
+    delta_active = total_active_duty - lag(total_active_duty),
+    delta_reserve = total_reserve - lag(total_reserve),
+    percentage_delta_active = (total_active_duty - lag(total_active_duty)) / total_active_duty * 100,
+    percentage_delta_reserve = (total_reserve - lag(total_reserve)) / total_reserve * 100
+  )
+
+military_presence_total_active_reserve[is.na(military_presence_total_active_reserve)] = 0
+
+expenditure_vs_total_military <- military_presence_total_active_reserve %>% 
+  left_join(US_expenditure_data, by = c('Year'))
+
+expenditure_vs_total_military <- expenditure_vs_total_military %>% 
+  slice(1:12) %>% 
+  select(Year, percentage_delta_active, percentage_delta_reserve, percentage_delta_expenditure)
+
+ggplot() +
+  geom_line(
+    data = expenditure_vs_total_military,
+    aes(x = Year,
+    y = percentage_delta_active,
+    color = "blue")
+  ) +
+  geom_line(
+    data = expenditure_vs_total_military,
+    aes(x = Year,
+    y = percentage_delta_reserve,
+    color = "red")
+  ) +
+  geom_line(
+    data = expenditure_vs_total_military,
+    aes(x = Year,
+    y = percentage_delta_expenditure)
+  )
+
+```
+
+Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
+
+```{r}
+
 military_presence_2021 <- military_presence %>% 
   filter(Year == 2021)
 
 #No government data on U.S. troop levels in Afghanistan have been made available since 2017. Government data returned to being made publicly available in December 2021.
 
-military_presence_total_active <- military_presence_2021 %>% 
+military_presence_total_active_2021 <- military_presence_2021 %>% 
   group_by(Location, Date) %>% 
   summarize(
     total_army = sum(Army_Active_Duty),
@@ -49,7 +148,7 @@ military_presence_total_active <- military_presence_2021 %>%
   select(Location, Date, total_active_duty) %>% 
   arrange(Location, Date, .by_group = TRUE)
 
-military_presence_total_reserve <- military_presence_2021 %>% 
+military_presence_total_reserve_2021 <- military_presence_2021 %>% 
   group_by(Location, Date) %>% 
   summarize(
     total_army = sum(Army_Reserve),
@@ -62,28 +161,28 @@ military_presence_total_reserve <- military_presence_2021 %>%
   select(Location, Date, total_reserve) %>% 
   arrange(Location, Date, .by_group = TRUE)
 
-military_presence_total_active <- military_presence_total_active[-1,]
-military_presence_total_reserve <- military_presence_total_reserve[-1,]
+military_presence_total_active_2021 <- military_presence_total_active_2021[-1,]
+military_presence_total_reserve_2021 <- military_presence_total_reserve_2021[-1,]
 
 #Remove Afghanistan because it's not relevant to our question.
 
-military_presence_active_delta <- military_presence_total_active %>% 
+military_presence_active_delta_2021 <- military_presence_total_active_2021 %>% 
   mutate(delta = total_active_duty - lag(total_active_duty)) %>% 
   select(-total_active_duty)
 
-military_presence_active_delta[is.na(military_presence_active_delta)] = 0
+military_presence_active_delta_2021[is.na(military_presence_active_delta_2021)] = 0
 
-military_presence_reserve_delta <- military_presence_total_reserve %>% 
+military_presence_reserve_delta_2021 <- military_presence_total_reserve_2021 %>% 
   mutate(delta = total_reserve - lag(total_reserve)) %>% 
   select(-total_reserve)
 
-military_presence_reserve_delta[is.na(military_presence_reserve_delta)] = 0
+military_presence_reserve_delta_2021[is.na(military_presence_reserve_delta_2021)] = 0
 
-military_presence_active_delta <- military_presence_active_delta %>% 
+military_presence_active_delta_2021 <- military_presence_active_delta_2021 %>% 
   filter(Date == "2021-12-01") %>% 
   arrange(desc(delta))
 
-military_presence_reserve_delta <- military_presence_reserve_delta %>% 
+military_presence_reserve_delta_2021 <- military_presence_reserve_delta_2021 %>% 
   filter(Date == "2021-12-01") %>% 
   arrange(desc(delta))
 
