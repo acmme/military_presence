@@ -32,18 +32,15 @@ military_presence <- military_presence %>%
   )
 
 military_active <- military_presence %>%
+  filter(Year == 2021)%>%
 group_by(Location)%>%
   summarize(
     total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%>%
   arrange(total_active)
 
-
-
-
-
-          
-
-
-
+military_per_100K <- read_csv("population.csv")%>%
+  inner_join(military_active, by=c ("Location"))%>%
+  mutate(military_per_100K = total_active/Population*100000)%>%
+  arrange(desc(military_per_100K))
 
 ```
