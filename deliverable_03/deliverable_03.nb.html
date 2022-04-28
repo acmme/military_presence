@@ -235,15 +235,21 @@ library(rvest)
 <p>First, we’re going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021 (we include the year 2021 for the sake of answering question 3). There are two things we want to do with dataframe: create a Year column and a Month column. The Year column is to be able to better filter our data across different years.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSByZWFkX2NzdihcIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdlwiKVxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSBtaWxpdGFyeV9wcmVzZW5jZSAlPiUgXG4gIG11dGF0ZShcbiAgICBZZWFyID0geWVhcihEYXRlKVxuICApXG5gYGAifQ== -->
-<pre class="r"><code>
-military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)
-
-military_presence &lt;- military_presence %&gt;% 
-  mutate(
-    Year = year(Date)
-  )</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoXCJtaWxpdGFyeV9wcmVzZW5jZS5jc3ZcIilcblxuYGBgIn0= -->
+<pre class="r"><code>military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)
+</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogODg0MiBDb2x1bW5zOiAxOVxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAgKDEpOiBMb2NhdGlvblxuZGJsICAoMTcpOiBBcm15X0FjdGl2ZV9EdXR5LCBOYXZ5X0FjdGl2ZV9EdXR5LCBNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHksIEFpcl9Gb3JjZV9BY3RpdmVfRHV0eSwgQ29hLi4uXG5kYXRlICAoMSk6IERhdGVcblxuaSBVc2UgYHNwZWMoKWAgdG8gcmV0cmlldmUgdGhlIGZ1bGwgY29sdW1uIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZGF0YS5cbmkgU3BlY2lmeSB0aGUgY29sdW1uIHR5cGVzIG9yIHNldCBgc2hvd19jb2xfdHlwZXMgPSBGQUxTRWAgdG8gcXVpZXQgdGhpcyBtZXNzYWdlLlxuIn0= -->
+<pre><code>Rows: 8842 Columns: 19
+-- Column specification -------------------------------------------------------------------------------
+Delimiter: &quot;,&quot;
+chr   (1): Location
+dbl  (17): Army_Active_Duty, Navy_Active_Duty, Marine_Corps_Active_Duty, Air_Force_Active_Duty, Coa...
+date  (1): Date
+
+i Use `spec()` to retrieve the full column specification for this data.
+i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Question 1:What are the biggest shifts in the locations of military personnel between 2008-2016, either into or out of a country?</p>
