@@ -277,3 +277,38 @@ ggplot() +
   )
 
 ```
+
+Question 5
+
+```{r}
+world_pop_url <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
+
+world_pop_table <- world_pop_url %>% 
+  read_html() %>% 
+  html_table()
+
+table <- world_pop_table[[1]]
+
+pop_table <- table %>% 
+  rename(
+    Location = c(2)
+  )
+
+pop_table <- pop_table %>% 
+  select(c(2,4))
+
+pop_table <- pop_table %>% 
+  slice(-1)
+
+pop_table$Location <- str_to_upper(pop_table$Location)
+
+pop_table$Population <- gsub(",","",pop_table$Population)
+
+pop_table <- pop_table %>% 
+  mutate(
+    Population = as.numeric(Population)
+  )
+
+write_csv(pop_table, "population.csv")
+
+```
