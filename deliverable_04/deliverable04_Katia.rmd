@@ -1,0 +1,49 @@
+---
+title: "R Notebook"
+author: Katia Pechenkina
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(dplyr)
+
+```
+
+Q5. Which countries have the least U.S. military presence?
+
+Writing in the csv file with cleaned data from 2008 to 2021. 
+```{r}
+
+military_presence <- read_csv("military_presence.csv")
+
+
+military_presence <- military_presence %>% 
+  mutate(
+    Year = year(Date)
+  )
+
+military_active <- military_presence %>%
+group_by(Location)%>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%>%
+  arrange(total_active)
+
+
+
+
+
+          
+
+
+
+
+```
