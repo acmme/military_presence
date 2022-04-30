@@ -164,7 +164,6 @@ military_presence_data[ , i] <- apply(military_presence_data[ , i], 2, function(
 
 military_presence_data$Date <- mdy(military_presence_data$Date)
 
-
 ```
 
 And it's clean!
