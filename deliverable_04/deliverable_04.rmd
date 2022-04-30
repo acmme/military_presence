@@ -26,6 +26,7 @@ military_presence <- read_csv("military_presence.csv")
 
 military_presence <- military_presence %>% 
   mutate(
+    Date = mdy(Date),
     Year = year(Date)
   )
 ```
@@ -261,10 +262,10 @@ Question 4: How many military personnel are located in an “unknown” location
 
 ```{r}
 military_presence_unknown <- military_presence %>% 
-  filter(Location == "UNKNOWN" | Location == "ZZ-UNKNOWN") %>% 
+  filter(Location == "UNKNOWN") %>% 
   group_by(Year) %>% 
   summarize(
-    total_unknown_personnel = sum(c_across(3:19))
+    total_unknown_personnel = sum(c_across(4:20))
   )
 
 ggplot() +
