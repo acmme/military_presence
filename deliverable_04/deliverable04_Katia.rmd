@@ -28,11 +28,12 @@ military_presence <- read_csv("military_presence.csv")
 
 military_presence <- military_presence %>% 
   mutate(
+    Date = mdy(Date),
     Year = year(Date)
   )
 
 military_active <- military_presence %>%
-  filter(Year == 2021)%>%
+  filter(Year == 2021 & US_Or_Overseas == "OS")%>%
 group_by(Location)%>%
   summarize(
     total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%>%
