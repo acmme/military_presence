@@ -221,13 +221,39 @@ pre code {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBUdXJuIG9mZiBzY2llbnRpZmljIG5vdGF0aW9uXG5vcHRpb25zKHNjaXBlbj05OTkpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmxpYnJhcnkocmVhZHhsKVxubGlicmFyeShsdWJyaWRhdGUpXG5saWJyYXJ5KGRwbHlyKVxuXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBUdXJuIG9mZiBzY2llbnRpZmljIG5vdGF0aW9uXG5vcHRpb25zKHNjaXBlbj05OTkpXG5saWJyYXJ5KHRpZHl2ZXJzZSlcbmBgYCJ9 -->
 <pre class="r"><code># Turn off scientific notation
 options(scipen=999)
-library(tidyverse)
-library(readxl)
-library(lubridate)
-library(dplyr)
+library(tidyverse)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVnaXN0ZXJlZCBTMyBtZXRob2RzIG92ZXJ3cml0dGVuIGJ5ICdkYnBseXInOlxuICBtZXRob2QgICAgICAgICBmcm9tXG4gIHByaW50LnRibF9sYXp5ICAgICBcbiAgcHJpbnQudGJsX3NxbCAgICAgIFxuLS0gQXR0YWNoaW5nIHBhY2thZ2VzIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHRpZHl2ZXJzZSAxLjMuMSAtLVxudiBnZ3Bsb3QyIDMuMy41ICAgICB2IHB1cnJyICAgMC4zLjRcbnYgdGliYmxlICAzLjEuNiAgICAgdiBkcGx5ciAgIDEuMC43XG52IHRpZHlyICAgMS4xLjQgICAgIHYgc3RyaW5nciAxLjQuMFxudiByZWFkciAgIDIuMS4xICAgICB2IGZvcmNhdHMgMC41LjFcbi0tIENvbmZsaWN0cyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSB0aWR5dmVyc2VfY29uZmxpY3RzKCkgLS1cbnggZHBseXI6OmZpbHRlcigpIG1hc2tzIHN0YXRzOjpmaWx0ZXIoKVxueCBkcGx5cjo6bGFnKCkgICAgbWFza3Mgc3RhdHM6OmxhZygpXG4ifQ== -->
+<pre><code>Registered S3 methods overwritten by &#39;dbplyr&#39;:
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+-- Attaching packages -------------------------------------------------------------------------------------------------------------- tidyverse 1.3.1 --
+v ggplot2 3.3.5     v purrr   0.3.4
+v tibble  3.1.6     v dplyr   1.0.7
+v tidyr   1.1.4     v stringr 1.4.0
+v readr   2.1.1     v forcats 0.5.1
+-- Conflicts ----------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkeGwpXG5saWJyYXJ5KGx1YnJpZGF0ZSlcbmBgYCJ9 -->
+<pre class="r"><code>library(readxl)
+library(lubridate)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYbHVicmlkYXRl4oCZXG5cblRoZSBmb2xsb3dpbmcgb2JqZWN0cyBhcmUgbWFza2VkIGZyb20g4oCYcGFja2FnZTpiYXNl4oCZOlxuXG4gICAgZGF0ZSwgaW50ZXJzZWN0LCBzZXRkaWZmLCB1bmlvblxuIn0= -->
+<pre><code>
+Attaching package: ‘lubridate’
+
+The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkcGx5cilcblxuYGBgIn0= -->
+<pre class="r"><code>library(dplyr)
 </code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
@@ -236,17 +262,42 @@ library(dplyr)
 <p>Writing in the csv file with cleaned data from 2008 to 2021.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wZXJfMTAwSyA8LSByZWFkX2NzdihcInBvcHVsYXRpb24uY3N2XCIpJT4lXG4gIGlubmVyX2pvaW4obWlsaXRhcnlfYWN0aXZlLCBieT1jIChcIkxvY2F0aW9uXCIpKSU+JVxuICBtdXRhdGUobWlsaXRhcnlfcGVyXzEwMEsgPSB0b3RhbF9hY3RpdmUvUG9wdWxhdGlvbioxMDAwMDApJT4lXG4gIGFycmFuZ2UoZGVzYyhtaWxpdGFyeV9wZXJfMTAwSykpXG5cbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5taWxpdGFyeV9wcmVzZW5jZSA8LSByZWFkX2NzdihcIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdlwiKVxuYGBgIn0= -->
 <pre class="r"><code>
+military_presence &lt;- read_csv(&quot;military_presence.csv&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogODg0MiBDb2x1bW5zOiAyMFxuLS0gQ29sdW1uIHNwZWNpZmljYXRpb24gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLVxuRGVsaW1pdGVyOiBcIixcIlxuY2hyICAoMyk6IERhdGUsIFVTX09yX092ZXJzZWFzLCBMb2NhdGlvblxuZGJsICgxNyk6IEFybXlfQWN0aXZlX0R1dHksIE5hdnlfQWN0aXZlX0R1dHksIE1hcmluZV9Db3Jwc19BY3RpdmVfRHV0eSwgQWlyX0ZvcmNlX0FjdGl2ZV9EdXR5LCBDb2FzdF9HdWFyZF9BY3RpdmVfRHV0eSwgQXJteV9OYXRpb25hbF9HdWFyZCwgQXJteV9SLi4uXG5cbmkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG5pIFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
+<pre><code>Rows: 8842 Columns: 20
+-- Column specification -------------------------------------------------------------------------------------------------------------------------------
+Delimiter: &quot;,&quot;
+chr  (3): Date, US_Or_Overseas, Location
+dbl (17): Army_Active_Duty, Navy_Active_Duty, Marine_Corps_Active_Duty, Air_Force_Active_Duty, Coast_Guard_Active_Duty, Army_National_Guard, Army_R...
+
+i Use `spec()` to retrieve the full column specification for this data.
+i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWlsaXRhcnlfcHJlc2VuY2UgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIFxuICBtdXRhdGUoXG4gICAgWWVhciA9IHllYXIoRGF0ZSlcbiAgKVxuICBcblxubWlsaXRhcnlfYWN0aXZlIDwtIG1pbGl0YXJ5X3ByZXNlbmNlICU+JVxuICBmaWx0ZXIoWWVhciA9PSAyMDIxICYgVVNfT3JfT3ZlcnNlYXMgPT0gXCJPU1wiKSU+JVxuZ3JvdXBfYnkoTG9jYXRpb24pJT4lXG4gIHN1bW1hcml6ZShcbiAgICB0b3RhbF9hY3RpdmUgPSBzdW0oQXJteV9BY3RpdmVfRHV0eSkgKyBzdW0oTmF2eV9BY3RpdmVfRHV0eSkgKyBzdW0oTWFyaW5lX0NvcnBzX0FjdGl2ZV9EdXR5KSArIHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpICsgc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KSklPiVcbiAgYXJyYW5nZSh0b3RhbF9hY3RpdmUpXG5cbm1pbGl0YXJ5X3Blcl8xMDBLIDwtIHJlYWRfY3N2KFwicG9wdWxhdGlvbi5jc3ZcIiklPiVcbiAgaW5uZXJfam9pbihtaWxpdGFyeV9hY3RpdmUsIGJ5PWMgKFwiTG9jYXRpb25cIikpJT4lXG4gIG11dGF0ZShtaWxpdGFyeV9wZXJfMTAwSyA9IHRvdGFsX2FjdGl2ZS9Qb3B1bGF0aW9uKjEwMDAwMCklPiVcbiAgYXJyYW5nZShkZXNjKG1pbGl0YXJ5X3Blcl8xMDBLKSlcbmBgYCJ9 -->
+<pre class="r"><code>military_presence &lt;- military_presence %&gt;% 
+  mutate(
+    Year = year(Date)
+  )
+  
+
+military_active &lt;- military_presence %&gt;%
+  filter(Year == 2021 &amp; US_Or_Overseas == &quot;OS&quot;)%&gt;%
+group_by(Location)%&gt;%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%&gt;%
+  arrange(total_active)
+
 military_per_100K &lt;- read_csv(&quot;population.csv&quot;)%&gt;%
   inner_join(military_active, by=c (&quot;Location&quot;))%&gt;%
   mutate(military_per_100K = total_active/Population*100000)%&gt;%
-  arrange(desc(military_per_100K))
-</code></pre>
+  arrange(desc(military_per_100K))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjQxIENvbHVtbnM6IDJcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tXG5EZWxpbWl0ZXI6IFwiLFwiXG5jaHIgKDEpOiBMb2NhdGlvblxuZGJsICgxKTogUG9wdWxhdGlvblxuXG5pIFVzZSBgc3BlYygpYCB0byByZXRyaWV2ZSB0aGUgZnVsbCBjb2x1bW4gc3BlY2lmaWNhdGlvbiBmb3IgdGhpcyBkYXRhLlxuaSBTcGVjaWZ5IHRoZSBjb2x1bW4gdHlwZXMgb3Igc2V0IGBzaG93X2NvbF90eXBlcyA9IEZBTFNFYCB0byBxdWlldCB0aGlzIG1lc3NhZ2UuXG4ifQ== -->
+<!-- rnb-output-begin eyJkYXRhIjoiUm93czogMjQxIENvbHVtbnM6IDJcbi0tIENvbHVtbiBzcGVjaWZpY2F0aW9uIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS1cbkRlbGltaXRlcjogXCIsXCJcbmNociAoMSk6IExvY2F0aW9uXG5kYmwgKDEpOiBQb3B1bGF0aW9uXG5cbmkgVXNlIGBzcGVjKClgIHRvIHJldHJpZXZlIHRoZSBmdWxsIGNvbHVtbiBzcGVjaWZpY2F0aW9uIGZvciB0aGlzIGRhdGEuXG5pIFNwZWNpZnkgdGhlIGNvbHVtbiB0eXBlcyBvciBzZXQgYHNob3dfY29sX3R5cGVzID0gRkFMU0VgIHRvIHF1aWV0IHRoaXMgbWVzc2FnZS5cbiJ9 -->
 <pre><code>Rows: 241 Columns: 2
--- Column specification -----------------------------------------------------------------------------------------------------------------------
+-- Column specification -------------------------------------------------------------------------------------------------------------------------------
 Delimiter: &quot;,&quot;
 chr (1): Location
 dbl (1): Population
@@ -256,7 +307,7 @@ i Specify the column types or set `show_col_types = FALSE` to quiet this message
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQphdXRob3I6IEthdGlhIFBlY2hlbmtpbmENCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCmBgYHtyfQ0KIyBUdXJuIG9mZiBzY2llbnRpZmljIG5vdGF0aW9uDQpvcHRpb25zKHNjaXBlbj05OTkpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkocmVhZHhsKQ0KbGlicmFyeShsdWJyaWRhdGUpDQpsaWJyYXJ5KGRwbHlyKQ0KDQpgYGANCg0KUTUuIFdoaWNoIGNvdW50cmllcyBoYXZlIHRoZSBsZWFzdCBVLlMuIG1pbGl0YXJ5IHByZXNlbmNlPw0KDQpXcml0aW5nIGluIHRoZSBjc3YgZmlsZSB3aXRoIGNsZWFuZWQgZGF0YSBmcm9tIDIwMDggdG8gMjAyMS4gDQpgYGB7cn0NCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdiIpDQoNCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIA0KICBtdXRhdGUoDQogICAgWWVhciA9IHllYXIoRGF0ZSkNCiAgKQ0KDQptaWxpdGFyeV9hY3RpdmUgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lDQogIGZpbHRlcihZZWFyID09IDIwMjEpJT4lDQpncm91cF9ieShMb2NhdGlvbiklPiUNCiAgc3VtbWFyaXplKA0KICAgIHRvdGFsX2FjdGl2ZSA9IHN1bShBcm15X0FjdGl2ZV9EdXR5KSArIHN1bShOYXZ5X0FjdGl2ZV9EdXR5KSArIHN1bShNYXJpbmVfQ29ycHNfQWN0aXZlX0R1dHkpICsgc3VtKEFpcl9Gb3JjZV9BY3RpdmVfRHV0eSkgKyBzdW0oQ29hc3RfR3VhcmRfQWN0aXZlX0R1dHkpKSU+JQ0KICBhcnJhbmdlKHRvdGFsX2FjdGl2ZSkNCg0KbWlsaXRhcnlfcGVyXzEwMEsgPC0gcmVhZF9jc3YoInBvcHVsYXRpb24uY3N2IiklPiUNCiAgaW5uZXJfam9pbihtaWxpdGFyeV9hY3RpdmUsIGJ5PWMgKCJMb2NhdGlvbiIpKSU+JQ0KICBtdXRhdGUobWlsaXRhcnlfcGVyXzEwMEsgPSB0b3RhbF9hY3RpdmUvUG9wdWxhdGlvbioxMDAwMDApJT4lDQogIGFycmFuZ2UoZGVzYyhtaWxpdGFyeV9wZXJfMTAwSykpDQoNCmBgYA==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQphdXRob3I6IEthdGlhIFBlY2hlbmtpbmENCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KGVjaG8gPSBUUlVFKQ0KYGBgDQoNCmBgYHtyfQ0KIyBUdXJuIG9mZiBzY2llbnRpZmljIG5vdGF0aW9uDQpvcHRpb25zKHNjaXBlbj05OTkpDQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCmxpYnJhcnkocmVhZHhsKQ0KbGlicmFyeShsdWJyaWRhdGUpDQpsaWJyYXJ5KGRwbHlyKQ0KDQpgYGANCg0KUTUuIFdoaWNoIGNvdW50cmllcyBoYXZlIHRoZSBsZWFzdCBVLlMuIG1pbGl0YXJ5IHByZXNlbmNlPw0KDQpXcml0aW5nIGluIHRoZSBjc3YgZmlsZSB3aXRoIGNsZWFuZWQgZGF0YSBmcm9tIDIwMDggdG8gMjAyMS4gDQpgYGB7cn0NCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gcmVhZF9jc3YoIm1pbGl0YXJ5X3ByZXNlbmNlLmNzdiIpDQoNCg0KbWlsaXRhcnlfcHJlc2VuY2UgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lIA0KICBtdXRhdGUoDQogICAgWWVhciA9IHllYXIoRGF0ZSkNCiAgKQ0KDQptaWxpdGFyeV9hY3RpdmUgPC0gbWlsaXRhcnlfcHJlc2VuY2UgJT4lDQogIGZpbHRlcihZZWFyID09IDIwMjEgJiBVU19Pcl9PdmVyc2VhcyA9PSAiT1MiKSU+JQ0KZ3JvdXBfYnkoTG9jYXRpb24pJT4lDQogIHN1bW1hcml6ZSgNCiAgICB0b3RhbF9hY3RpdmUgPSBzdW0oQXJteV9BY3RpdmVfRHV0eSkgKyBzdW0oTmF2eV9BY3RpdmVfRHV0eSkgKyBzdW0oTWFyaW5lX0NvcnBzX0FjdGl2ZV9EdXR5KSArIHN1bShBaXJfRm9yY2VfQWN0aXZlX0R1dHkpICsgc3VtKENvYXN0X0d1YXJkX0FjdGl2ZV9EdXR5KSklPiUNCiAgYXJyYW5nZSh0b3RhbF9hY3RpdmUpDQoNCm1pbGl0YXJ5X3Blcl8xMDBLIDwtIHJlYWRfY3N2KCJwb3B1bGF0aW9uLmNzdiIpJT4lDQogIGlubmVyX2pvaW4obWlsaXRhcnlfYWN0aXZlLCBieT1jICgiTG9jYXRpb24iKSklPiUNCiAgbXV0YXRlKG1pbGl0YXJ5X3Blcl8xMDBLID0gdG90YWxfYWN0aXZlL1BvcHVsYXRpb24qMTAwMDAwKSU+JQ0KICBhcnJhbmdlKGRlc2MobWlsaXRhcnlfcGVyXzEwMEspKQ0KDQpgYGA=</div>
 
 
 
