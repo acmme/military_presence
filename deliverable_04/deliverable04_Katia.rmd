@@ -28,6 +28,7 @@ military_presence <- read_csv("military_presence.csv")
 
 military_presence <- military_presence %>% 
   mutate(
+    Date = mdy(Date),
     Year = year(Date)
   )
 
