@@ -176,4 +176,4 @@ The data includes military location data that was updated in 2008 up to 2019, to
 
 A number of soldiers are also located in an "Unknown" location in the U.S., which is only described as active duty members of the Army (which is to say, there are no reserve Marines that are in an "unknown" US location). This might not be accurate and might be a way to record members of the military regardless of which branch they're from.
 
-As of December 2017, the Department of Defense stopped including personnel on temporary duty, which will show a reduction in raw numbers and could show a reduction in proportional military presence in each country or U.S. territory. The data doesn't differentiate between temporary and permanent personnel.
+As of December 2017, the Department of Defense stopped including personnel on temporary duty, which will show a reduction in raw numbers and could show a reduction in proportional military presence in each country or U.S. territory. The data doesn't differentiate between temporary and permanent personnel. Between December 2017 and September 2021, the Department of Defense also stopped including personnel in Afghanistan.

@@ -4,6 +4,14 @@ author: Lyna Bentahar & Katia Pechenkina
 output: html_notebook
 ---
 
+The data includes military location data that was updated in 2008 up to 2019, to include the last three full terms of the last two presidents and the last year of George Bush's presidency (to establish an initial data point). This data was updated once a year until 2014, when it became a quarterly update. For that reason, early data might be more nonspecific than later data. The data also assumes the locations "Armed Forces Europe," "Armed Forces The Americas" and "Armed Forces Pacific" to be located in the United States, which is a quirk of the data that we will need to research in order to differentiate between soldiers recorded as being actually located overseas, such as in Germany or New Zealand, and soldiers actually in the U.S.
+
+A number of soldiers are also located in an "Unknown" location in the U.S., which is only described as active duty members of the Army (which is to say, there are no reserve Marines that are in an "unknown" US location). This might not be accurate and might be a way to record members of the military regardless of which branch they're from.
+
+As of December 2017, the Department of Defense stopped including personnel on temporary duty, which will show a reduction in raw numbers and could show a reduction in proportional military presence in each country or U.S. territory. The data doesn't differentiate between temporary and permanent personnel. Between December 2017 and September 2021, the Department of Defense also stopped including personnel in Afghanistan.
+
+First, we set up our notebook with the necessary libraries.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -18,7 +26,7 @@ library(rvest)
 
 ```
 
-First, we're going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021 (we include the year 2021 for the sake of answering question 3). There are two things we want to do with dataframe: create a Year column and a Month column. The Year column is to be able to better filter our data across different years.
+We're going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021. There are two things we want to do with the dataframe: fix a date error and create a Year column. The Year column is to be able to better filter our data across different years.
 
 ```{r}
 
@@ -31,31 +39,52 @@ military_presence <- military_presence %>%
   )
 ```
 
-Question 1:What are the biggest shifts in the locations of military personnel between 2008-2016, either into or out of a country?
+Question 1:What are the biggest shifts in the overseas locations of military personnel between 2008-2016, either into or out of a country?
 
-We are analyzing the shifts in military during the Obama administration so we are looking at the start of his first presidential term and comparing it to the last year of his second term. We are only looking at active military so we summarize by that. And then using lag function we find out the change in number of troops. We arrange in descending order to see the major changes. 
+Background and summary of the findings: 
 
-The results: Top 10 states states that experienced the increase in military personnel in 2016 compared to 2008 were California, Texas, North Carolina, Virginia, Georgia, Florida, Washington, Hawaii, Colorado, Kentucky. 
-Top 10 oversees locations that saw an increase were: Armed Forces Pacific, Armed Forces Europe, Japan, Germany, South Korea, Italy, United Kingdom, Bahrain, Afghanistan, Guam.
+Before Obama became president, he vowed to end the U.S. conflicts in Iraq and Afghanistan. His administration made reductions in the number of troops overseas. 
+
+The U.S. military has been in Japan since the end of World War II and in South Korea since the start of the Korean war.
 
 
-Top 3 locations with a somewhat significant decrease in the US military presence, according to the data: Iraq, Kuwait, Philippines. 
+We are analyzing the shifts in military during the Obama administration, including the year 2008 as an initial point. We are looking at the start of his first presidential term and comparing it to the last year of his second term. We are narrowing our focus to the U.S. military's active presence. And then using lag function we find out the change in number of troops. We arrange in descending order to see the major changes.
+
+We created a dataframe that includes September 2008 (the only month of reporting for the year of 2008) and December 2016 (the last month of reporting for the year of 2016). We only included Overseas changes, as changes between U.S. states do not overwhelmingly reflect foreign policy decisions. (Border control, as we interpret it, is a domestic policy decision.) Grouping by Location and Year, we were able to summarize the total active military members across branches of military in each location per year.
 
 ```{r}
 
-obama_08_and_16 <- military_presence %>%
-  filter(Year == "2008" | Year == "2016")%>%
+obama_terms <- military_presence %>%
+  filter(US_Or_Overseas == "OS") %>% 
+  filter(Year == 2008 | Date == "2016-12-01") %>%
 group_by(Location, Year)%>%
   summarize(
-    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)) 
-
-obama_08_and_16 <- obama_08_and_16%>%
-  arrange(Location,Year, .by_group = TRUE)%>%
-  mutate(change= total_active - lag(total_active))%>%
-arrange(desc(change))
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+    ) 
 
 ```
 
+Using the lag() function to see the change in military presence in each location from 2008 to 2016 (and finding the absolute value of these changes), we found the biggest changes in military personnel per location over time.
+
+```{r}
+
+obama_terms <- obama_terms %>%
+  arrange(Location, Year, .by_group = TRUE) %>%
+  mutate(
+    change = total_active - lag(total_active),
+    abs_change = abs(change)
+    ) %>%
+  arrange(desc(abs_change)) %>% 
+  #The U.S. military considers its U.S. territories overseas territory, but for the purposes of this analysis, we do not consider U.S. territories overseas territories. We will ignore Guam for this reason.
+  head(11)
+
+```
+
+We found the greatest changes in military presence, in or out of a country, during the Obama administration were in Iraq, Kuwait, Afghanistan, the Philippines, Germany, Qatar, Japan, South Korea, Spain and Jordan. Iraq's demilitarization is the most compelling number, taking out over 100,000 troops over the course of two terms, leaving a little over 5,000 troops in the country. Kuwait, a country whose militarization began during the first Gulf War, saw nearly 36,000 U.S. troops withdrawn, leaving a little over 6,000 troops.
+
+A majority of these troops were in Middle Eastern countries, but over the course of Obama's administration saw a huge demilitarization, a part of Obama's campaign promise to withdraw from Iraq and Afghanistan. The administration, however, left nearly twice as many troops in Afghanistan than in Iraq, despite starting off with fewer troops in 2008.
+
+-
 
 Question 2: How does total military personnel correlate with military spending?
 
@@ -98,7 +127,7 @@ US_expenditure_data <- US_expenditure_data %>%
 
 ```
 
-Also to make the data more useable, we're going to name the first column Year and the second column Millions_of_dollars. At the same time, since we only need 2008-2019 data, we're going to remove the first 8 rows.
+Also to make the data easier to use, we're going to name the first column Year and the second column Millions_of_dollars. At the same time, since we only need 2008-2019 data (2019 is the latest year available on Wikipedia, and 2008 is the earliest year recorded in our military presence data), we're going to remove the first 8 rows.
 
 ```{r}
 
@@ -108,7 +137,7 @@ US_expenditure_data <- US_expenditure_data %>%
 
 ```
 
-Last thing we need to do is define our data types.. Right now, US_expenditure_data only has character data types. Millions_of_dollars needs to be numeric. But, it's not possible to make the Millions_of_dollars column numeric, because there are characters in the cells; namely, commas.
+Last thing we need to do is define our data types. Right now, US_expenditure_data only has character data types. Millions_of_dollars needs to be numeric. But, it's not possible to make the Millions_of_dollars column numeric, because there are characters in the cells; namely, commas.
 
 We will use the gsub() function to remove the commas. Then we can make the column numeric.
 
@@ -137,24 +166,20 @@ With our expenditure data organized, we now want to know the total military pers
 
 ```{r}
 
-military_presence_total_active_reserve <- military_presence %>% 
+military_presence_total_active <- military_presence %>% 
   group_by(Year) %>% 
   summarize(
-    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty),
-    
-    total_reserve = sum(Army_Reserve) + sum(Navy_Reserve) + sum(Marine_Corps_Reserve) + sum(Air_Force_Reserve) + sum(Coast_Guard_Reserve)
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
   ) %>% 
-  select(Year, total_active, total_reserve)
+  select(Year, total_active)
 
-military_presence_total_active_reserve <- military_presence_total_active_reserve %>% 
+military_presence_total_active <- military_presence_total_active %>% 
   mutate(
     delta_active = total_active - lag(total_active),
-    delta_reserve = total_reserve - lag(total_reserve),
-    percentage_delta_active = (total_active - lag(total_active)) / total_active * 100,
-    percentage_delta_reserve = (total_reserve - lag(total_reserve)) / total_reserve * 100
+    percentage_delta_active = (total_active - lag(total_active)) / total_active * 100
   )
 
-military_presence_total_active_reserve[is.na(military_presence_total_active_reserve)] = 0
+military_presence_total_active[is.na(military_presence_total_active)] = 0
 
 ```
 
@@ -164,12 +189,12 @@ Finally, we only want to keep our percentage change columns, since percentage ch
 
 ```{r}
 
-expenditure_vs_total_military <- military_presence_total_active_reserve %>% 
+expenditure_vs_total_military <- military_presence_total_active %>% 
   left_join(US_expenditure_data, by = c('Year'))
 
 expenditure_vs_total_military <- expenditure_vs_total_military %>% 
   slice(1:12) %>% 
-  select(Year, percentage_delta_active, percentage_delta_reserve, percentage_delta_expenditure)
+  select(Year, percentage_delta_active, percentage_delta_expenditure)
 
 ```
 
@@ -182,23 +207,22 @@ ggplot() +
     data = expenditure_vs_total_military,
     aes(x = Year,
     y = percentage_delta_active,
-    color = "blue")
+    color = "percentage change in active military personnel")
   ) +
   geom_line(
     data = expenditure_vs_total_military,
     aes(x = Year,
-    y = percentage_delta_reserve,
-    color = "red")
-  ) +
-  geom_line(
-    data = expenditure_vs_total_military,
-    aes(x = Year,
-    y = percentage_delta_expenditure)
+    y = percentage_delta_expenditure,
+    color = "percentage change in military expenditure")
   )
 
 ```
 
 Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
+
+After 20 years of the U.S. military presence in Afghanistan, the Biden administration committed to the Trump administration's decision to withdraw from the country. The U.S. military departed by the end of August. 
+
+There is no military data in Afghanistan in the year of 2021 until long after the withdrawal, in December 2021. But we can understand Biden's foreign policy decisions based on where he wants to reposition troops.
 
 For this question, we want a military_presence dataframe that only includes the year 2021, the year the withdrawal occurred.
 
@@ -253,11 +277,36 @@ When we look at these data frames, we see that the greatest increases in militar
 
 military_presence_active_delta_2021 <- military_presence_active_delta_2021 %>% 
   filter(Date == "2021-12-01") %>% 
-  arrange(desc(delta))
+  arrange(desc(delta)) %>% 
+  head(10)
 
 view(military_presence_active_delta_2021)
 
 ```
+
+Our findings show the greatest increases in military presence after Dec. 1, 2021 in the following countries: Japan, Djibouti, Italy, Germany, United Kingdom. 
+It’s important to note that the first location was California, while the second was Unknown. 
+While Japan and the mentioned European countries are not surprising results, Djibouti might be a newsworthy find. This strategically important location is home to the only permanent U.S. military base in Africa - Camp Lemonnier, which is close to Somalia and only a few miles away from Yemen. 
+
+```{r}
+
+military_presence_djibouti <- military_presence %>% 
+  filter(Location == "DJIBOUTI") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+
+ggplot() +
+  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active))
+
+```
+
+In a speech during the withdrawal from Afghanistan, Biden said:
+
+This is a new world.  The terror threat has metastasized across the world, well beyond Afghanistan.  We face threats from al-Shabaab in Somalia; al Qaeda affiliates in Syria and the Arabian Peninsula; and ISIS attempting to create a caliphate in Syria and Iraq, and establishing affiliates across Africa and Asia. 
+
+Citing Somalia and the Arabian Peninsula, and then moving troops
 
 Question 4: How many military personnel are located in an “unknown” location and how has that changed between 2008-2016?
 
@@ -312,5 +361,17 @@ pop_table <- pop_table %>%
   )
 
 write_csv(pop_table, "population.csv")
+
+military_active <- military_presence %>%
+  filter(Year == 2021 & US_Or_Overseas == "OS")%>%
+group_by(Location)%>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%>%
+  arrange(total_active)
+
+military_per_100K <- read_csv("population.csv")%>%
+  inner_join(military_active, by=c ("Location"))%>%
+  mutate(military_per_100K = total_active/Population*100000)%>%
+  arrange(desc(military_per_100K))
 
 ```
