@@ -23,6 +23,7 @@ library(tidyverse)
 library(lubridate)
 library(janitor)
 library(rvest)
+library(scales)
 
 ```
 
@@ -217,6 +218,9 @@ ggplot() +
   )
 
 ```
+This graph shows that there is unlikely any relationship between military expenditure and active military personnel. This might suggest that allocations to the military that go directly to the maintenance of military personnel are largely negligent. With greater research, we might be able to determine to what degree military spending goes into the maintenance of the U.S. military force.
+
+-
 
 Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
 
@@ -271,7 +275,7 @@ military_presence_active_delta_2021[is.na(military_presence_active_delta_2021)] 
 
 We will then filter the data so we only see the month of December. Finally, we arrange the data to show the largest changes in the locations of military personnel.
 
-When we look at these data frames, we see that the greatest increases in military personnel are in an "unknown" location called ZZ-UNKNOWN. 2246 new people on active duty are in ZZ-UNKNOWN. According to The Washington Post, the U.S.'s military presence in Afghanistan totaled approximately 3,000 troops in April 2021.
+When we look at these data frames, we see that the greatest increases in military personnel are in an "unknown" location called UNKNOWN. 2246 new people on active duty are in UNKNOWN. According to The Washington Post, the U.S.'s military presence in Afghanistan totaled approximately 3,000 troops in April 2021.
 
 ```{r}
 
@@ -288,6 +292,8 @@ Our findings show the greatest increases in military presence after Dec. 1, 2021
 It’s important to note that the first location was California, while the second was Unknown. 
 While Japan and the mentioned European countries are not surprising results, Djibouti might be a newsworthy find. This strategically important location is home to the only permanent U.S. military base in Africa - Camp Lemonnier, which is close to Somalia and only a few miles away from Yemen. 
 
+To quickly evaluate if this is a common increase in troops in Djibouti, we created a dataframe of military personnel in Djibouti only and used it to create a graph that showed the change in active military personnel over time.
+
 ```{r}
 
 military_presence_djibouti <- military_presence %>% 
@@ -298,22 +304,40 @@ military_presence_djibouti <- military_presence %>%
   )
 
 ggplot() +
-  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active))
+  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active)) +
+  labs(title = "Active military in Djibouti over time",
+         x = "Year",
+         y = "Number of active military personnel") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
 
 ```
 
-In a speech during the withdrawal from Afghanistan, Biden said:
+The graph reflects an expansion of Camp Lemonnier during the Obama administration that began with the creation of the United States Africa Command, activated in late 2008. During the Trump administration, China established a nearby base, the Chinese People's Liberation Army Support Base in Djibouti, that may have been the explanation for the sudden spike and then sudden drop in military personnel in the country. 
 
-This is a new world.  The terror threat has metastasized across the world, well beyond Afghanistan.  We face threats from al-Shabaab in Somalia; al Qaeda affiliates in Syria and the Arabian Peninsula; and ISIS attempting to create a caliphate in Syria and Iraq, and establishing affiliates across Africa and Asia. 
+The president of Djibouti at the time said:
 
-Citing Somalia and the Arabian Peninsula, and then moving troops
+Je sais que cette obsession de la présence chinoise existe. Mais elle est à la fois infondée et unilatérale.
+
+"I know that this obsession with the Chinese presence exists. But at the same time it's baseless and one-sided."
+
+In a speech during the withdrawal from Afghanistan, President Joe Biden said:
+
+This is a new world. The terror threat has metastasized across the world, well beyond Afghanistan. We face threats from al-Shabaab in Somalia; al Qaeda affiliates in Syria and the Arabian Peninsula; and ISIS attempting to create a caliphate in Syria and Iraq, and establishing affiliates across Africa and Asia. 
+
+Citing Somalia and the Arabian Peninsula, and then moving troops in the greatest increase since 2018, as shown in the above graph, might suggest that Biden was establishing a foreign policy change for the U.S. government in his speech. More data would be needed, as troops in Djibouti are still well under the amount that the Obama administration began with during their first term, when Biden was vice president. It could also be a temporary increase, as seen in 2017 and 2018. 2022 data is needed.
+
+-
 
 Question 4: How many military personnel are located in an “unknown” location and how has that changed between 2008-2016?
+
+We created a database that found the number of all troops, in active duty or in reserve, located in an undisclosed location, and created a line graph to see the number of troops in an undisclosed location over time.
+
+According to our findings, as of 2021, approximately 73,000 troops were located in an “unknown” location. The highest increase in troops in an Unknown location was in 2016, after which the number was cut in half.
 
 ```{r}
 military_presence_unknown <- military_presence %>% 
   filter(Location == "UNKNOWN") %>% 
-  group_by(Year) %>% 
+  group_by(Date) %>% 
   summarize(
     total_unknown_personnel = sum(c_across(4:20))
   )
@@ -322,14 +346,58 @@ ggplot() +
   geom_line(
     data = military_presence_unknown,
     aes(
-      x = Year,
+      x = Date,
       y = total_unknown_personnel
     )
-  )
+  ) +
+  
+  labs(title = "Military personnel in an undisclosed location over time",
+         x = "Year",
+         y = "Number of military personnel in an undisclosed location") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
 
 ```
+The numbers significantly dropped after 2016, as shown in the graph. The most significant execution of policy in 2016 was the final stages of the Obama administration's withdrawal of U.S. troops in Afghanistan, reducing the number to a little under 10,000 troops.
 
-Question 5
+```{r}
+military_presence_afghan <- military_presence %>% 
+  filter(Location == "AFGHANISTAN") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_personnel = sum(c_across(4:20))
+  )
+
+ggplot() +
+  geom_line(
+    data = military_presence_unknown,
+    aes(
+      x = Date,
+      y = total_unknown_personnel,
+      color = "military presence in an undisclosed location"
+    )
+  ) +
+  geom_line(
+    data = military_presence_afghan,
+    aes(
+      x = Date,
+      y = total_personnel,
+      color = "military presence in Afghanistan"
+    )
+  ) +
+  
+  labs(title = "Military personnel in Afghanistan over time",
+         x = "Year",
+         y = "Number of military personnel in Afghanistan") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+Comparing the two changes in military personnel, however, shows no relationship. More information is needed about what determines a military member to be in an UNKNOWN location. We might also need more information to understand the error rates and the noisy data involved in the tallying of military personnel.
+
+-
+
+Question 5: What country has the most U.S. active military present per 100,000 people?
+
+We scraped population data from Wikipedia, which is updated regularly. Much of the population data is sourced from databases that have been updated in the last three years, and so there will be some error in using 2019 or 2022 census data to evaluate military presence data that hasn't been updated since December 2021. There will also be some error in the fact that Wikipedia might write out the names of these countries differently than in our military presence data.
 
 ```{r}
 world_pop_url <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
@@ -349,7 +417,7 @@ pop_table <- pop_table %>%
   select(c(2,4))
 
 pop_table <- pop_table %>% 
-  slice(-1)
+  slice(-1, -4)
 
 pop_table$Location <- str_to_upper(pop_table$Location)
 
@@ -361,6 +429,12 @@ pop_table <- pop_table %>%
   )
 
 write_csv(pop_table, "population.csv")
+
+```
+
+Nevertheless, we counted the number of active military troops in 2021, joined the dataframe with the population data and calculated the number of active military troops per 100,000 people.
+
+```{r}
 
 military_active <- military_presence %>%
   filter(Year == 2021 & US_Or_Overseas == "OS")%>%
@@ -374,4 +448,57 @@ military_per_100K <- read_csv("population.csv")%>%
   mutate(military_per_100K = total_active/Population*100000)%>%
   arrange(desc(military_per_100K))
 
+view(military_per_100K)
+
 ```
+
+According to our findings, in Bahrain, a country with just over 1.5 million people, 1061 U.S. military personnel are present per 100,000 people. This is the greatest number of U.S. military personnel per 100,000 people in any given country. The second highest number comes from Palau, but even Palau only has about 700 U.S. military personnel per 100,000 people, a 300-person difference. From there, no other country exceeds 200 U.S. military personnel per 100,000 people, including South Korea and Japan, major U.S. allies that were earlier found to have the most amount of U.S. military personnel situated in their countries overall.
+
+Palau likely retains such a high proportion of U.S. military personnel for two reasons: Its role as a major battleground in the World War II Pacific Theater, and its location relative to Guam, a U.S. territory.
+
+We also found that Bahrain, an island country like Palau, is in a strategically important location of the Persian Gulf and is the headquarters of the Navy's Fifth Fleet.
+
+```{r}
+military_presence_bahrain <- military_presence %>% 
+  filter(Location == "BAHRAIN") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_army = sum(Army_Active_Duty) + sum(Army_Reserve),
+    total_navy = sum(Navy_Active_Duty) + sum(Navy_Reserve),
+    total_marine_corps = sum(Marine_Corps_Active_Duty) + sum(Marine_Corps_Reserve),
+    total_air_force = sum(Air_Force_Active_Duty) + sum(Air_Force_Reserve),
+    total_coast_guard = sum(Coast_Guard_Active_Duty) + sum(Coast_Guard_Reserve)
+  )
+
+ggplot(data = military_presence_bahrain, aes(x = Date)) +
+  geom_line(
+      aes(y = total_army,
+      color = "Army, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_navy,
+      color = "Navy, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_marine_corps,
+      color = "Marine Corps, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_air_force,
+      color = "Air Force, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_coast_guard,
+      color = "Coast Guard, active and reserve"
+    )) +
+  
+  labs(title = "Military personnel in Bahrain over time, by branch",
+         x = "Year",
+         y = "Number of active military personnel in Bahrain, by branch") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+As expected, we found that the Navy, and to some extent the Marine Corps, provided the greatest number of military personnel located in Bahrain.
+
+These questions, and the analyses that followed, show that regardless of the Afghanistan withdrawal last year, the U.S. military presence in the Greater Middle East is a major aspect of not only American foreign policy, but the larger interests of the U.S. military as well. There is no way to withdraw from the greater Middle East in its entirety, because the Middle East remains a large backbone of the U.S. military. Military bases in Djibouti and headquarters in Bahrain continue to maintain an overwhelming U.S. presence, and shows that the U.S. maintains and legitimizes its presence in much the same way it did in East Asia in the 20th century.
+
