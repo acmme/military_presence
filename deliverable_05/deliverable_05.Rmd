@@ -1,0 +1,593 @@
+---
+title: "Deliverable 05"
+author: Lyna Bentahar & Katia Pechenkina
+output: html_notebook
+---
+
+The data includes military location data that was updated in 2008 up to 2019, to include the last three full terms of the last two presidents and the last year of George Bush's presidency (to establish an initial data point). This data was updated once a year until 2014, when it became a quarterly update. For that reason, early data might be more nonspecific than later data. The data also assumes the locations "Armed Forces Europe," "Armed Forces The Americas" and "Armed Forces Pacific" to be located in the United States, which is a quirk of the data that we will need to research in order to differentiate between soldiers recorded as being actually located overseas, such as in Germany or New Zealand, and soldiers actually in the U.S.
+
+A number of soldiers are also located in an "Unknown" location in the U.S., which is only described as active duty members of the Army (which is to say, there are no reserve Marines that are in an "unknown" US location). This might not be accurate and might be a way to record members of the military regardless of which branch they're from.
+
+As of December 2017, the Department of Defense stopped including personnel on temporary duty, which will show a reduction in raw numbers and could show a reduction in proportional military presence in each country or U.S. territory. The data doesn't differentiate between temporary and permanent personnel. Between December 2017 and September 2021, the Department of Defense also stopped including personnel in Afghanistan.
+
+First, we set up our notebook with the necessary libraries.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Turn off scientific notation
+options(scipen=999)
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(rvest)
+library(scales)
+
+```
+
+We're going to call up the military_presence.csv, which has the cleaned up data from 2008 to 2021. There are two things we want to do with the dataframe: fix a date error and create a Year column. The Year column is to be able to better filter our data across different years.
+
+```{r}
+
+military_presence <- read_csv("military_presence.csv")
+
+military_presence <- military_presence %>% 
+  mutate(
+    Date = mdy(Date),
+    Year = year(Date)
+  )
+```
+
+Question 1:What are the biggest shifts in the overseas locations of military personnel between 2008-2016, either into or out of a country?
+
+Background and summary of the findings: 
+
+Before Obama became president, he vowed to end the U.S. conflicts in Iraq and Afghanistan. His administration made reductions in the number of troops overseas. 
+
+The U.S. military has been in Japan since the end of World War II and in South Korea since the start of the Korean war.
+
+
+We are analyzing the shifts in military during the Obama administration, including the year 2008 as an initial point. We are looking at the start of his first presidential term and comparing it to the last year of his second term. We are narrowing our focus to the U.S. military's active presence. And then using lag function we find out the change in number of troops. We arrange in descending order to see the major changes.
+
+We created a dataframe that includes September 2008 (the only month of reporting for the year of 2008) and December 2016 (the last month of reporting for the year of 2016). We only included Overseas changes, as changes between U.S. states do not overwhelmingly reflect foreign policy decisions. (Border control, as we interpret it, is a domestic policy decision.) Grouping by Location and Year, we were able to summarize the total active military members across branches of military in each location per year.
+
+```{r}
+
+obama_terms <- military_presence %>%
+  filter(US_Or_Overseas == "OS") %>% 
+  filter(Year == 2008 | Date == "2016-12-01") %>%
+group_by(Location, Year)%>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+    ) 
+
+```
+
+Using the lag() function to see the change in military presence in each location from 2008 to 2016 (and finding the absolute value of these changes), we found the biggest changes in military personnel per location over time.
+
+```{r}
+
+obama_terms <- obama_terms %>%
+  arrange(Location, Year, .by_group = TRUE) %>%
+  mutate(
+    change = total_active - lag(total_active),
+    abs_change = abs(change)
+    ) %>%
+  arrange(desc(abs_change)) %>% 
+  #The U.S. military considers its U.S. territories overseas territory, but for the purposes of this analysis, we do not consider U.S. territories overseas territories. We will ignore Guam for this reason.
+  head(11)
+
+```
+
+We found the greatest changes in military presence, in or out of a country, during the Obama administration were in Iraq, Kuwait, Afghanistan, the Philippines, Germany, Qatar, Japan, South Korea, Spain and Jordan. Iraq's demilitarization is the most compelling number, taking out over 100,000 troops over the course of two terms, leaving a little over 5,000 troops in the country. Kuwait, a country whose militarization began during the first Gulf War, saw nearly 36,000 U.S. troops withdrawn, leaving a little over 6,000 troops.
+
+A majority of these troops were in Middle Eastern countries, but over the course of Obama's administration saw a huge demilitarization, a part of Obama's campaign promise to withdraw from Iraq and Afghanistan. The administration, however, left nearly twice as many troops in Afghanistan than in Iraq, despite starting off with fewer troops in 2008.
+
+We also want to see how these shifts occur among the military branches.
+
+```{r}
+
+change_branches <- military_presence %>%
+  filter(US_Or_Overseas == "OS") %>% 
+  group_by(Date)%>%
+  summarize(
+    total_army_active = sum(Army_Active_Duty),
+    total_navy_active = sum(Navy_Active_Duty),
+    total_marine_active = sum(Marine_Corps_Active_Duty),
+    total_air_active = sum(Air_Force_Active_Duty),
+    total_guard_active = sum(Coast_Guard_Active_Duty)
+    ) 
+
+change_branches <- change_branches %>%
+  arrange(Date, .by_group = TRUE) %>%
+  mutate(
+    change_army = total_army_active - lag(total_army_active),
+    abs_change_army = abs(change_army),
+    change_navy = total_navy_active - lag(total_navy_active),
+    abs_change_navy = abs(change_navy),
+    change_marine = total_marine_active - lag(total_marine_active),
+    abs_change_marine = abs(change_marine),
+    change_air = total_air_active - lag(total_air_active),
+    abs_change_air = abs(change_air),
+    change_guard = total_guard_active - lag(total_guard_active),
+    abs_change_guard = abs(change_guard)
+    )
+
+ggplot(data = change_branches) +
+  geom_line(aes(x = Date, y = abs_change_army, color = "red")) +
+  geom_line(aes(x = Date, y = abs_change_navy, color = "blue")) +
+  geom_line(aes(x = Date, y = abs_change_marine, color = "orange")) +
+  geom_line(aes(x = Date, y = abs_change_air, color = "green")) +
+  geom_line(aes(x = Date, y = abs_change_guard, color = "violet")) +
+  labs(title = "Change in military personnel per branch",
+         x = "Year",
+         y = "Number of active military personnel") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+
+With this graph, we can see that the greatest shifts in location for military personnel occur among members of the Army, most notably in 2012. This shift of nearly 50,000 members of the Army can be seen in a later question, when we show a nearly 50% change in active military personnel. The next most significant shift was just immediately before 2018, when all military branches some some shift in personnel, with Army and Air Force members seeing the greatest shift.
+
+Otherwise, we can see from this graph that of the branches, Marine Corps most frequently shifts military personnel, especially in the last four years.
+
+-
+
+Question 2: How does total military personnel correlate with military spending?
+
+To see how military personnel data corresponds with military spending, we want military expenditure data. Wikipedia was able to create tables that shows military expenditure by country, in millions of dollars, in 2022 dollars, up to 2019. Wikipedia derives this information from the Stockholm International Peace Research Institute database.
+
+We call this up into a value called expenditure_url, read the tables in the source code, and combine the last two tables, which have data from 2000 to 2019 (the first two tables show expenditures from before that).
+
+```{r}
+
+expenditure_url <- "https://en.wikipedia.org/wiki/Past_military_expenditure_by_country"
+
+expenditure_tables <- expenditure_url %>% 
+  read_html() %>% 
+  html_table()
+
+table3 <- expenditure_tables[[3]]
+table4 <- expenditure_tables[[4]]
+
+US_expenditure_data <- table3 %>% 
+  left_join(table4, by=c('Country'='Country'))
+  
+```
+
+We only want U.S. expenditure data, so we slice the U.S. row and remove the Country column (we know what country it is).
+
+```{r}
+
+US_expenditure_data <- US_expenditure_data %>% 
+  slice(18) %>% 
+  select(-c(1))
+
+```
+
+We then use the pivot_longer() function to flip the columns and rows to make the data more usable.
+
+```{r}
+
+US_expenditure_data <- US_expenditure_data %>% 
+  pivot_longer(c(1:20))
+
+```
+
+Also to make the data easier to use, we're going to name the first column Year and the second column Millions_of_dollars. At the same time, since we only need 2008-2019 data (2019 is the latest year available on Wikipedia, and 2008 is the earliest year recorded in our military presence data), we're going to remove the first 8 rows.
+
+```{r}
+
+US_expenditure_data <- US_expenditure_data %>% 
+  rename("Year" = "name", "Millions_of_dollars" = "value") %>% 
+  slice(-c(1:8))
+
+```
+
+Last thing we need to do is define our data types. Right now, US_expenditure_data only has character data types. Millions_of_dollars needs to be numeric. But, it's not possible to make the Millions_of_dollars column numeric, because there are characters in the cells; namely, commas.
+
+We will use the gsub() function to remove the commas. Then we can make the column numeric.
+
+```{r}
+
+US_expenditure_data$Millions_of_dollars <- gsub(",","",US_expenditure_data$Millions_of_dollars)
+
+US_expenditure_data <- as.data.frame(apply(US_expenditure_data, 2, as.numeric))
+```
+
+Using the lag() function, we can determine and create a column showing the change in military expenditure each year, and then determine and create a column showing the percentage change. For the sake of showing this information in a graphic later, we will turn any NAs into 0.
+
+```{r}
+
+US_expenditure_data <- US_expenditure_data %>% 
+  mutate(
+    delta_expenditure = Millions_of_dollars - lag(Millions_of_dollars),
+    percentage_delta_expenditure = (Millions_of_dollars - lag(Millions_of_dollars)) / Millions_of_dollars * 100
+  )
+
+US_expenditure_data[is.na(US_expenditure_data)] = 0
+
+```
+
+With our expenditure data organized, we now want to know the total military personnel, both active and in reserve, per year. We summarize the data by summarizing the military personnel from their different branches and separating them by active duty and reserve columns. Then, we determine and create a column showing the change in total personnel per year, and determine and create a column showing the percentage change. We do the same thing as the expenditure data in turning any NAs into 0.
+
+```{r}
+
+military_presence_total_active <- military_presence %>% 
+  group_by(Year) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  ) %>% 
+  select(Year, total_active)
+
+military_presence_total_active <- military_presence_total_active %>% 
+  mutate(
+    delta_active = total_active - lag(total_active),
+    percentage_delta_active = (total_active - lag(total_active)) / total_active * 100
+  )
+
+military_presence_total_active[is.na(military_presence_total_active)] = 0
+
+```
+
+We then join the total personnel dataframe to the expenditure dataframe by their year into a new dataframe. But, since our expenditure data only goes up to 2019, we are going to remove the 2020 and 2021 rows.
+
+Finally, we only want to keep our percentage change columns, since percentage change is the best way to compare expenditure and human capital.
+
+```{r}
+
+expenditure_vs_total_military <- military_presence_total_active %>% 
+  left_join(US_expenditure_data, by = c('Year'))
+
+expenditure_vs_total_military <- expenditure_vs_total_military %>% 
+  slice(1:12) %>% 
+  select(Year, percentage_delta_active, percentage_delta_expenditure)
+
+```
+
+Finally, with the data combined, we're going to compare everything in a ggplot, which shows that despite a sudden increase in military personnel -- both active duty and reserve -- in military personnel in Obama's second term, there was no sudden increase in military spending, which in fact saw a dip in spending.
+
+```{r}
+
+ggplot() +
+  geom_line(
+    data = expenditure_vs_total_military,
+    aes(x = Year,
+    y = percentage_delta_active,
+    color = "percentage change in active military personnel")
+  ) +
+  geom_line(
+    data = expenditure_vs_total_military,
+    aes(x = Year,
+    y = percentage_delta_expenditure,
+    color = "percentage change in military expenditure")
+  )
+
+```
+This graph shows that there is unlikely any relationship between military expenditure and active military personnel. This might suggest that allocations to the military that go directly to the maintenance of military personnel are largely negligent. With greater research, we might be able to determine to what degree military spending goes into the maintenance of the U.S. military force.
+
+-
+
+Question 3: What countries saw an increase in military presence after the withdrawal of Afghanistan?
+
+After 20 years of the U.S. military presence in Afghanistan, the Biden administration committed to the Trump administration's decision to withdraw from the country. The U.S. military departed by the end of August. 
+
+There is no military data in Afghanistan in the year of 2021 until long after the withdrawal, in December 2021. But we can understand Biden's foreign policy decisions based on where he wants to reposition troops.
+
+For this question, we want a military_presence dataframe that only includes the year 2021, the year the withdrawal occurred.
+
+```{r}
+
+military_presence_2021 <- military_presence %>% 
+  filter(Year == 2021)
+
+```
+
+No government data on U.S. troop levels in Afghanistan have been made available since 2017. Government data returned to being made publicly available in December 2021. So, the only way to see what happened to U.S. military personnel after Afghanistan is to see the increases in personnel in December.
+
+Just like in question 2, we will summarize the data into total active duty personnel.  This time, however, we will be grouping the data by the personnel's location and the date they were in that location.
+
+```{r}
+
+military_presence_total_active_2021 <- military_presence_2021 %>% 
+  group_by(Location, Date) %>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  ) %>% 
+  select(Location, Date, total_active) %>% 
+  arrange(Location, Date, .by_group = TRUE)
+
+```
+
+The first row shows Afghanistan numbers in December 2021, but this isn't helpful to us, so we're just going to remove it.
+
+```{r}
+
+military_presence_total_active_2021 <- military_presence_total_active_2021[-1,]
+
+```
+
+We will then use the lag() function to determine and create a column for the change in personnel in each location across the year. For the sake of potentially making a graphic for this information, we will turn any NAs into 0s.
+
+```{r}
+
+military_presence_active_delta_2021 <- military_presence_total_active_2021 %>% 
+  mutate(delta = total_active - lag(total_active)) %>% 
+  select(-total_active)
+
+military_presence_active_delta_2021[is.na(military_presence_active_delta_2021)] = 0
+
+```
+
+We will then filter the data so we only see the month of December. Finally, we arrange the data to show the largest changes in the locations of military personnel.
+
+When we look at these data frames, we see that the greatest increases in military personnel are in an "unknown" location called UNKNOWN. 2246 new people on active duty are in UNKNOWN. According to The Washington Post, the U.S.'s military presence in Afghanistan totaled approximately 3,000 troops in April 2021.
+
+```{r}
+
+military_presence_active_delta_2021 <- military_presence_active_delta_2021 %>% 
+  filter(Date == "2021-12-01") %>% 
+  arrange(desc(delta)) %>% 
+  head(10)
+
+view(military_presence_active_delta_2021)
+
+```
+
+Our findings show the greatest increases in military presence after Dec. 1, 2021 in the following countries: Japan, Djibouti, Italy, Germany, United Kingdom. 
+It’s important to note that the first location was California, while the second was Unknown. 
+While Japan and the mentioned European countries are not surprising results, Djibouti might be a newsworthy find. This strategically important location is home to the only permanent U.S. military base in Africa - Camp Lemonnier, which is close to Somalia and only a few miles away from Yemen. 
+
+To quickly evaluate if this is a common increase in troops in Djibouti, we created a dataframe of military personnel in Djibouti only and used it to create a graph that showed the change in active military personnel over time.
+
+```{r}
+
+military_presence_djibouti <- military_presence %>% 
+  filter(Location == "DJIBOUTI") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+
+ggplot() +
+  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active)) +
+  labs(title = "Active military in Djibouti over time",
+         x = "Year",
+         y = "Number of active military personnel") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+
+The graph reflects an expansion of Camp Lemonnier during the Obama administration that began with the creation of the United States Africa Command, activated in late 2008. During the Trump administration, China established a nearby base, the Chinese People's Liberation Army Support Base in Djibouti, that may have been the explanation for the sudden spike and then sudden drop in military personnel in the country. 
+
+The president of Djibouti at the time said:
+
+Je sais que cette obsession de la présence chinoise existe. Mais elle est à la fois infondée et unilatérale.
+
+"I know that this obsession with the Chinese presence exists. But at the same time it's baseless and one-sided."
+
+In a speech during the withdrawal from Afghanistan, President Joe Biden said:
+
+This is a new world. The terror threat has metastasized across the world, well beyond Afghanistan. We face threats from al-Shabaab in Somalia; al Qaeda affiliates in Syria and the Arabian Peninsula; and ISIS attempting to create a caliphate in Syria and Iraq, and establishing affiliates across Africa and Asia. 
+
+Citing Somalia and the Arabian Peninsula, and then moving troops in the greatest increase since 2018, as shown in the above graph, might suggest that Biden was establishing a foreign policy change for the U.S. government in his speech. More data would be needed, as troops in Djibouti are still well under the amount that the Obama administration began with during their first term, when Biden was vice president. It could also be a temporary increase, as seen in 2017 and 2018. 2022 data is needed.
+
+Djibouti is bordered by Somalia, Eritrea, and Ethiopia. If we compare Djibouti's active U.S. military over time with that of its border countries, we find:
+
+```{r}
+military_presence_djibouti <- military_presence %>% 
+  filter(Location == "DJIBOUTI") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+military_presence_somalia <- military_presence %>% 
+  filter(Location == "SOMALIA") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+military_presence_eritrea <- military_presence %>% 
+  filter(Location == "ERITREA") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+military_presence_ethiopia <- military_presence %>% 
+  filter(Location == "ETHIOPIA") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty)
+  )
+
+ggplot() +
+  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active, color = "red")) +
+  geom_line(data = military_presence_somalia, aes(x = Date, y = total_active, color = "blue")) +
+  geom_line(data = military_presence_eritrea, aes(x = Date, y = total_active, color = "green")) +
+  geom_line(data = military_presence_ethiopia, aes(x = Date, y = total_active, color = "orange")) +
+  labs(title = "Active military in Djibouti and its border countries over time",
+         x = "Year",
+         y = "Number of active military personnel") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+
+You can see that Djibouti's numbers are significantly higher than its border countries.
+
+-
+
+Question 4: How many military personnel are located in an “unknown” location and how has that changed between 2008-2016?
+
+We created a database that found the number of all troops, in active duty or in reserve, located in an undisclosed location, and created a line graph to see the number of troops in an undisclosed location over time.
+
+According to our findings, as of 2021, approximately 73,000 troops were located in an “unknown” location. The highest increase in troops in an Unknown location was in 2016, after which the number was cut in half.
+
+```{r}
+military_presence_unknown <- military_presence %>% 
+  filter(Location == "UNKNOWN") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_unknown_personnel = sum(c_across(4:20))
+  )
+
+ggplot() +
+  geom_line(
+    data = military_presence_unknown,
+    aes(
+      x = Date,
+      y = total_unknown_personnel
+    )
+  ) +
+  
+  labs(title = "Military personnel in an undisclosed location over time",
+         x = "Year",
+         y = "Number of military personnel in an undisclosed location") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+The numbers significantly dropped after 2016, as shown in the graph. The most significant execution of policy in 2016 was the final stages of the Obama administration's withdrawal of U.S. troops in Afghanistan, reducing the number to a little under 10,000 troops.
+
+```{r}
+military_presence_afghan <- military_presence %>% 
+  filter(Location == "AFGHANISTAN") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_personnel = sum(c_across(4:20))
+  )
+
+ggplot() +
+  geom_line(
+    data = military_presence_unknown,
+    aes(
+      x = Date,
+      y = total_unknown_personnel,
+      color = "military presence in an undisclosed location"
+    )
+  ) +
+  geom_line(
+    data = military_presence_afghan,
+    aes(
+      x = Date,
+      y = total_personnel,
+      color = "military presence in Afghanistan"
+    )
+  ) +
+  
+  labs(title = "Military personnel in Afghanistan over time",
+         x = "Year",
+         y = "Number of military personnel in Afghanistan") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+Comparing the two changes in military personnel, however, shows no relationship. More information is needed about what determines a military member to be in an UNKNOWN location. We might also need more information to understand the error rates and the noisy data involved in the tallying of military personnel.
+
+-
+
+Question 5: What country has the most U.S. active military present per 100,000 people?
+
+We scraped population data from Wikipedia, which is updated regularly. Much of the population data is sourced from databases that have been updated in the last three years, and so there will be some error in using 2019 or 2022 census data to evaluate military presence data that hasn't been updated since December 2021. There will also be some error in the fact that Wikipedia might write out the names of these countries differently than in our military presence data.
+
+```{r}
+world_pop_url <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
+
+world_pop_table <- world_pop_url %>% 
+  read_html() %>% 
+  html_table()
+
+table <- world_pop_table[[1]]
+
+pop_table <- table %>% 
+  rename(
+    Location = c(2)
+  )
+
+pop_table <- pop_table %>% 
+  select(c(2,4))
+
+pop_table <- pop_table %>% 
+  slice(-1, -4)
+
+pop_table$Location <- str_to_upper(pop_table$Location)
+
+pop_table$Population <- gsub(",","",pop_table$Population)
+
+pop_table <- pop_table %>% 
+  mutate(
+    Population = as.numeric(Population)
+  )
+
+write_csv(pop_table, "population.csv")
+
+```
+
+Nevertheless, we counted the number of active military troops in 2021, joined the dataframe with the population data and calculated the number of active military troops per 100,000 people.
+
+```{r}
+
+military_active <- military_presence %>%
+  filter(Year == 2021 & US_Or_Overseas == "OS")%>%
+group_by(Location)%>%
+  summarize(
+    total_active = sum(Army_Active_Duty) + sum(Navy_Active_Duty) + sum(Marine_Corps_Active_Duty) + sum(Air_Force_Active_Duty) + sum(Coast_Guard_Active_Duty))%>%
+  arrange(total_active)
+
+military_per_100K <- read_csv("population.csv")%>%
+  inner_join(military_active, by=c ("Location"))%>%
+  mutate(military_per_100K = total_active/Population*100000)%>%
+  arrange(desc(military_per_100K))
+
+view(military_per_100K)
+
+```
+
+According to our findings, in Bahrain, a country with just over 1.5 million people, 1061 U.S. military personnel are present per 100,000 people. This is the greatest number of U.S. military personnel per 100,000 people in any given country. The second highest number comes from Palau, but even Palau only has about 700 U.S. military personnel per 100,000 people, a 300-person difference. From there, no other country exceeds 200 U.S. military personnel per 100,000 people, including South Korea and Japan, major U.S. allies that were earlier found to have the most amount of U.S. military personnel situated in their countries overall.
+
+Palau likely retains such a high proportion of U.S. military personnel for two reasons: Its role as a major battleground in the World War II Pacific Theater, and its location relative to Guam, a U.S. territory.
+
+We also found that Bahrain, an island country like Palau, is in a strategically important location of the Persian Gulf and is the headquarters of the Navy's Fifth Fleet.
+
+```{r}
+military_presence_bahrain <- military_presence %>% 
+  filter(Location == "BAHRAIN") %>% 
+  group_by(Date) %>% 
+  summarize(
+    total_army = sum(Army_Active_Duty) + sum(Army_Reserve),
+    total_navy = sum(Navy_Active_Duty) + sum(Navy_Reserve),
+    total_marine_corps = sum(Marine_Corps_Active_Duty) + sum(Marine_Corps_Reserve),
+    total_air_force = sum(Air_Force_Active_Duty) + sum(Air_Force_Reserve),
+    total_coast_guard = sum(Coast_Guard_Active_Duty) + sum(Coast_Guard_Reserve)
+  )
+
+ggplot(data = military_presence_bahrain, aes(x = Date)) +
+  geom_line(
+      aes(y = total_army,
+      color = "Army, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_navy,
+      color = "Navy, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_marine_corps,
+      color = "Marine Corps, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_air_force,
+      color = "Air Force, active and reserve"
+    )) +
+  geom_line(
+      aes(y = total_coast_guard,
+      color = "Coast Guard, active and reserve"
+    )) +
+  
+  labs(title = "Military personnel in Bahrain over time, by branch",
+         x = "Year",
+         y = "Number of active military personnel in Bahrain, by branch") +
+  scale_x_date(date_breaks = "years" , date_labels = "'%y")
+
+```
+As expected, we found that the Navy, and to some extent the Marine Corps, provided the greatest number of military personnel located in Bahrain.
+
+These questions, and the analyses that followed, show that regardless of the Afghanistan withdrawal last year, the U.S. military presence in the Greater Middle East is a major aspect of not only American foreign policy, but the larger interests of the U.S. military as well. There is no way to withdraw from the greater Middle East in its entirety, because the Middle East remains a large backbone of the U.S. military. Military bases in Djibouti and headquarters in Bahrain continue to maintain an overwhelming U.S. presence, and shows that the U.S. maintains and legitimizes its presence in much the same way it did in East Asia in the 20th century.
+
