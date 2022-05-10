@@ -116,11 +116,11 @@ change_branches <- change_branches %>%
     )
 
 ggplot(data = change_branches) +
-  geom_line(aes(x = Date, y = abs_change_army, color = "red")) +
-  geom_line(aes(x = Date, y = abs_change_navy, color = "blue")) +
-  geom_line(aes(x = Date, y = abs_change_marine, color = "orange")) +
-  geom_line(aes(x = Date, y = abs_change_air, color = "green")) +
-  geom_line(aes(x = Date, y = abs_change_guard, color = "violet")) +
+  geom_line(aes(x = Date, y = abs_change_army, color = "Army")) +
+  geom_line(aes(x = Date, y = abs_change_navy, color = "Navy")) +
+  geom_line(aes(x = Date, y = abs_change_marine, color = "Marine Corps")) +
+  geom_line(aes(x = Date, y = abs_change_air, color = "Air Force")) +
+  geom_line(aes(x = Date, y = abs_change_guard, color = "Coast Guard")) +
   labs(title = "Change in military personnel per branch",
          x = "Year",
          y = "Number of active military personnel") +
@@ -402,10 +402,10 @@ military_presence_ethiopia <- military_presence %>%
   )
 
 ggplot() +
-  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active, color = "red")) +
-  geom_line(data = military_presence_somalia, aes(x = Date, y = total_active, color = "blue")) +
-  geom_line(data = military_presence_eritrea, aes(x = Date, y = total_active, color = "green")) +
-  geom_line(data = military_presence_ethiopia, aes(x = Date, y = total_active, color = "orange")) +
+  geom_line(data = military_presence_djibouti, aes(x = Date, y = total_active, color = "Djibouti")) +
+  geom_line(data = military_presence_somalia, aes(x = Date, y = total_active, color = "Somalia")) +
+  geom_line(data = military_presence_eritrea, aes(x = Date, y = total_active, color = "Eritrea")) +
+  geom_line(data = military_presence_ethiopia, aes(x = Date, y = total_active, color = "Ethiopia")) +
   labs(title = "Active military in Djibouti and its border countries over time",
          x = "Year",
          y = "Number of active military personnel") +
